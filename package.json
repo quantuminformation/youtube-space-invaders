@@ -1,0 +1,30 @@
+{
+  "name": "youtube-space-invaders",
+  "version": "1.0.0",
+  "description": "Simple setup for client-only projects",
+  "main": "webpack.config.js",
+  "dependencies": {},
+  "devDependencies": {
+    "css-loader": "^0.25.0",
+    "html-webpack-plugin": "^2.22.0",
+    "style-loader": "^0.13.1",
+    "ts-loader": "^0.8.2",
+    "typescript": "^2.0.3",
+    "webpack": "^2.1.0-beta.25",
+    "webpack-validator": "^2.2.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuantumInformation/youtube-space-invaders.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
+  },
+  "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme"
+}
