@@ -11,7 +11,7 @@ const PATHS = {
 module.exports = {
 
   entry: {
-    app: PATHS.src + '/app.ts'
+    app: PATHS.src + '/app.js'
   },
   output: {
     path: PATHS.build,
@@ -34,7 +34,7 @@ module.exports = {
   },
   resolve: {
     // you can now require('file') instead of require('file.js')
-    extensions: ['.js', '.json']
+    extensions: ['.ts','.js', '.json']
   },
   plugins: [
     new HtmlWebpackPlugin({

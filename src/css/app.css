@@ -1,0 +1,7 @@
+#main-container {
+  margin: 60px auto 20px auto;
+  max-width: 1200px;
+  padding: 0 15px;
+  overflow: hidden;
+  text-align: center;
+}
