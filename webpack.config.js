@@ -1,4 +1,2 @@
-const validate = require('webpack-validator')
-module.exports = validate(require('./config/webpack.common.js'), {
-  quiet: true
-});
+//todo we will have dev and prod config
+module.exports = require('./config/webpack.common.js')

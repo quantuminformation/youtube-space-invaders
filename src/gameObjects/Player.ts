@@ -1,6 +1,8 @@
 import {IGameObject} from "./IGameObject"
 import {Vector2,Dimensions2} from "../util/Math"
 
+//var fileContent = require("raw!./images/player.svg");
+
 
 export  class Player implements IGameObject {
 
@@ -22,6 +24,10 @@ export  class Player implements IGameObject {
     context2D.fillStyle = this.color
     context2D.fillRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height)
     context2D.fillRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height)
+
+//todo look at this new way instead of importing svg via webpack
+/*    var path = new Path2D('M 100,100 h 50 v 50 h 50');
+    ctx.stroke(path);*/
   }
 
   update(elapsedUnit) {

@@ -1,4 +1,4 @@
-export var KEYS = {
+export let KEYS = {
     BACKSPACE: 8,
     TAB: 9,
     RETURN: 13,
@@ -25,6 +25,6 @@ export var KEYS = {
 }
 
 //think of these speeds as relative speeds t
-export var GAME_DEFAULTS = {
+export let GAME_DEFAULTS = {
     GAME_SPEED: 50 // the higher the number the faster the game will run
 }
