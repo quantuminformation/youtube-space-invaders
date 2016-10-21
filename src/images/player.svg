@@ -1,14 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="580" height="400">
+<svg xmlns="http://www.w3.org/2000/svg">
   <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
   <g>
-    <title>background</title>
-    <rect fill="#fff" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
-    <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
-      <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
-    </g>
-  </g>
-  <g>
-    <title>Layer 1</title>
-    <path id="svg_1" d="m279.5,154c-54.16667,45 -108.33333,90 -162.5,135l-50,-70l0,113l472,0l0,-104l-80,62l-179.5,-136z" stroke-width="1.5" stroke="#000" fill="#fff"/>
+    <title>Player ship</title>
+
+    <!--ship body-->
+    <path d="M0 30
+    L 10 10
+    L 20 20
+    L 30 5
+    L 40 20
+    L 50 10
+    L 60 30
+    Z"
+          stroke-width="2"     stroke="#555" fill="#BBB"/>
+
+    <!--canopy-->
+    <path d="M22 18 Q 30 -5, 38 18 Z" stroke="#0CF"  stroke-width="2" fill="#0AD"/>
   </g>
 </svg>

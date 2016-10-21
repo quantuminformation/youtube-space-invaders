@@ -1,8 +1,15 @@
 import {Player} from "./gameObjects/Player"
-import {Vector2} from "./util/Math"
-import {GAME_DEFAULTS, KEYS} from "./Common"
-import {Invader} from "./gameObjects/Invaders";
+import {Vector2, Vector2Normalised} from "./util/Math"
+import {KEY_CODES} from "./constants/Keycodes"
+import * as GameSettings from "./constants/GameSettings"
+import {GAME_OVER, INITIALISING, BATTLE_MODE, YOU_WIN} from "./constants/GameStates"
+import {Invader} from "./gameObjects/Invaders"
+import {BasicBullet, Bullet} from "./gameObjects/Bullets"
 import Waves from "./Waves"
+import {rectCollides} from "./util/CollisionDetection";
+import {IGameObject} from "./gameObjects/IGameObject";
+import {LARGE_FONT_SIZE} from "./constants/GameSettings";
+import {MEDIUM_FONT_SIZE} from "./constants/GameSettings";
 
 export class Game {
   static ASPECT_RATIO: number = 1 // keep it square for now
@@ -10,10 +17,16 @@ export class Game {
   static CANVAS_HEIGHT: number = Game.CANVAS_WIDTH / Game.ASPECT_RATIO
 
 
+  static gameState = INITIALISING
+  static score: number = 0
+
   player: Player
   playerOffsetHeight: number = 20
+  playerBullets: Array<Bullet> = [];
 
   invaders: Array <Invader>
+  invaderBullets: Array<Bullet> = [];
+
 
   canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('canvas')
 
@@ -21,57 +34,89 @@ export class Game {
 
   spaceColor: string = "black"
 
-  //for the key events
-  rightDown: boolean = false
-  leftDown: boolean = false
-  upDown: boolean = false
-  downDown: boolean = false
-  space: boolean = false
+  keyStatus = {}
 
-  lastFrame: number = this.timestamp() //init to current time
-
-  update() {
-    let start = this.timestamp()
-    let elapsedTime: number = start - this.lastFrame
-
-    // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
-    let elapsedReduced: number = (elapsedTime / 1000.0) * GAME_DEFAULTS.GAME_SPEED
-
-    this.updatePlayer(elapsedReduced)
-    this.updateEnemies(elapsedReduced);
-    this.draw()
-
-    this.lastFrame = start
-  }
-
-  timestamp(): number {
-    return new Date().getTime()
-  }
+  lastFrame: number = new Date().getTime()
 
   /**
    * Basically we figure out the best width for our canvas at start up.
    */
   constructor() {
+    new Date().getTime()
     this.context2D = this.canvas.getContext("2d")
     this.canvas.width = Game.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / Game.ASPECT_RATIO
 
+    //all keys are down to start
+    for (let code in KEY_CODES) {
+      this.keyStatus[KEY_CODES[code]] = false
+    }
+
     this.initGame()
   }
 
+
+  update() {
+    let start = new Date().getTime()
+    let elapsedTime: number = start - this.lastFrame
+
+    // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
+    let elapsedReduced: number = (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
+
+    this.drawBackground()
+
+    switch (Game.gameState) {
+      case INITIALISING:
+        this.drawInit()
+        return
+      case YOU_WIN:
+        this.drawYouWin()
+        return
+      case GAME_OVER:
+        this.drawGameOver()
+        return
+    }
+
+    //battle mode
+    this.updatePlayer(elapsedReduced)
+    this.updateEnemies(elapsedReduced);
+    this.updateBullets(elapsedReduced);
+    this.handleCollisions();
+
+    if (this.invaders.length === 0) {
+      Game.gameState = YOU_WIN
+    }
+
+    this.drawBattleScene()
+
+    this.lastFrame = start
+  }
+
+
+  drawInit() {
+    this.context2D.fillStyle = '#0FF';
+    this.context2D.font = LARGE_FONT_SIZE + "px Verdana";
+    this.context2D.fillText("Loading..", 5, 25);
+    Game.gameState = BATTLE_MODE
+  }
+
+  drawGameOver() {
+    this.context2D.fillStyle = '#F00';
+    this.context2D.font = LARGE_FONT_SIZE + "px Verdana";
+    this.context2D.fillText("Game over!", 5, 25);
+  }
+  drawYouWin() {
+    this.context2D.fillStyle = '#FF0';
+    this.context2D.font = LARGE_FONT_SIZE + "px Verdana";
+    this.context2D.fillText("YOU win!", 5, 25);
+  }
+
   onKeyDown(evt) {
-    if (evt.keyCode == KEYS.RIGHT) this.rightDown = true
-    else if (evt.keyCode == KEYS.LEFT) this.leftDown = true
-    else if (evt.keyCode == KEYS.UP) this.upDown = true
-    else if (evt.keyCode == KEYS.DOWN) this.downDown = true
+    this.keyStatus[evt.keyCode] = true
   }
 
   onKeyUp(evt) {
-    if (evt.keyCode == KEYS.RIGHT) this.rightDown = false
-    if (evt.keyCode == KEYS.LEFT) this.leftDown = false
-    if (evt.keyCode == KEYS.UP) this.upDown = false
-    if (evt.keyCode == KEYS.DOWN) this.downDown = false
-    if (evt.keyCode == KEYS.SPACE) this.space = false
+    this.keyStatus[evt.keyCode] = false
   }
 
   initGame() {
@@ -82,58 +127,78 @@ export class Game {
   }
 
   drawBackground() {
-    let self = this
-    self.context2D.fillStyle = self.spaceColor
-    self.context2D.fillRect(0, 0, Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT)
+    this.context2D.fillStyle = this.spaceColor
+    this.context2D.fillRect(0, 0, Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT)
   }
 
-  draw() {
-    this.drawBackground()
+  drawScore() {
+    this.context2D.fillStyle = '#0FF';
+    this.context2D.font = MEDIUM_FONT_SIZE + "px Verdana";
+    this.context2D.fillText(`Score: ${Game.score}`, 2, 14);
+    this.context2D.fillText(`Health: ${this.player.health}`, 2, Game.CANVAS_HEIGHT - 6);
+
+  }
+
+  drawBattleScene() {
+    this.drawScore()
     this.player.draw(this.context2D)
 
     let self = this;
-    this.invaders.forEach(function (item:Invader) {
-      item.draw(self.context2D);
+    this.invaders.forEach(function (thing: Invader) {
+      thing.draw(self.context2D);
+    });
+    this.playerBullets.forEach(function (thing: Bullet) {
+      thing.draw(self.context2D);
+    });
+    this.invaderBullets.forEach(function (thing: Bullet) {
+      thing.draw(self.context2D);
     });
   }
 
 
   updatePlayer(elapsedTime: number) {
-    if (this.leftDown) {
-      this.player.movmentVector.x = -this.player.DefaultMovementSpeed
+    if (this.keyStatus[KEY_CODES.LEFT]) {
+      this.player.updateDirection(new Vector2Normalised(270))
     }
-    else if (this.rightDown) {
-      this.player.movmentVector.x = this.player.DefaultMovementSpeed
+    else if (this.keyStatus[KEY_CODES.RIGHT]) {
+      this.player.updateDirection(new Vector2Normalised(90))
     }
     else {
-      this.player.movmentVector.x = 0
+      this.player.remainStationary()
     }
+
+    if (this.keyStatus[KEY_CODES.SPACE]) {
+      let bullet = this.player.shootAhead()
+      if (bullet) {
+        this.playerBullets.push(bullet)
+      }
+    }
+
     this.player.update(elapsedTime)
-    this.player.clamp(Game.CANVAS_WIDTH, this.canvas.height)
+    this.clamp(this.player)
   }
 
 
-  ReverseEnemyDirectionIfOutOfBoundsAndDropDown(): boolean {
-    let offset = 0;
-    for (var i = 0; i < this.invaders.length; i++) {
-      if (this.invaders[i].position.x < 0) {
-        offset = this.invaders[i].position.x;
-        break;
+  ReverseEnemyDirectionIfOutOfBoundsAndDropDown(): void {
+    let outOfBoundsBy = 0
+    this.invaders.forEach(item=> {
+      if (item.position.x < 0) {
+        outOfBoundsBy = item.position.x
+        return
+      } else if (item.position.x > (Game.CANVAS_WIDTH - item.dimensions.width)) {
+        outOfBoundsBy = item.position.x - (Game.CANVAS_WIDTH - item.dimensions.width)
+        return
       }
-      else if (this.invaders[i].position.x > (Game.CANVAS_WIDTH - this.invaders[i].dimensions.width)) {
-        offset = this.invaders[i].position.x - (Game.CANVAS_WIDTH - this.invaders[i].dimensions.width);
-        break;
-      }
-    }
-    if (offset === 0) {
-      return;
+    })
+
+    if (outOfBoundsBy === 0) {
+      return
     }
 
     this.invaders.forEach(function (enemy: Invader) {
       //moving to the right
-      enemy.movmentVector.x = enemy.movmentVector.x * -1;
-      enemy.position.x += offset * -1;
-      //   enemy.position.y += enemy.dimensions.height;
+      enemy.position.x -= outOfBoundsBy
+      enemy.reverse()
       enemy.position.y += 10;
     });
   }
@@ -147,15 +212,91 @@ export class Game {
 
     self.invaders.forEach(function (enemy: Invader) {
       enemy.update(elapsedUnit);// this might move things out of bounds so check next
+      //  self.clamp(enemy)
     });
 
     self.ReverseEnemyDirectionIfOutOfBoundsAndDropDown();
+    self.invaders.forEach(function (invader: Invader) {
+
+      if (Math.random() < invader.probabilityOfShooting) {
+        var fire = invader.shootAhead();
+        if (fire.hasOwnProperty("length")) {
+          self.invaderBullets = self.invaderBullets.concat(fire);
+        } else {
+          self.invaderBullets.push(fire);
+        }
+      }
+    });
+  }
+
+
+  updateBullets(elapsedUnit: number) {
+    this.playerBullets = this.playerBullets.filter(function (bullet) {
+      return bullet.active;
+    });
+    this.playerBullets.forEach(function (bullet: Bullet) {
+      bullet.update(elapsedUnit);
+    });
+
+    this.invaderBullets = this.invaderBullets.filter(function (bullet) {
+      return bullet.active;
+    });
+    this.invaderBullets.forEach(function (bullet: Bullet) {
+      bullet.update(elapsedUnit);
+    });
+
   }
 
   nextWave() {
     this.invaders = Waves.shift()();
     if (!this.invaders) {
-      alert("You win!! Well done.");
+      Game.gameState = YOU_WIN
+    }
+  }
+
+
+  handleCollisions() {
+    var self = this;
+    self.playerBullets.forEach(function (bullet: Bullet) {
+        self.invaders.forEach(function (invader: Invader) {
+          if (rectCollides(bullet, invader)) {
+            invader.takeHit(bullet);
+            bullet.active = false;
+          }
+        });
+      }
+    );
+
+    self.invaderBullets.forEach(function (bullet: Bullet) {
+      if (rectCollides(bullet, self.player)) {
+        self.player.takeDamage(bullet);
+        var postionCopy = JSON.parse(JSON.stringify(self.player.position))
+        bullet.active = false;
+      }
+    });
+  }
+
+  gameOver() {
+    alert("you lose!")
+  }
+
+
+  clamp(item: IGameObject) {
+    if (item.position.x < 0) {
+      item.position.x = 0
+      return
+    }
+    else if (item.position.x > (Game.CANVAS_WIDTH - item.dimensions.width)) {
+      item.position.x = Game.CANVAS_WIDTH - item.dimensions.width
+      return
+    }
+    else if (item.position.y < 0) {
+      item.position.y = 0
+      return
+    }
+    else if (item.position.y > (Game.CANVAS_HEIGHT - item.dimensions.height)) {
+      item.position.y = Game.CANVAS_HEIGHT - item.dimensions.height
+      return
     }
   }
 }

@@ -3,5 +3,8 @@
     "target": "es5",
     "sourceMap": true
   },
-  "files": []
+  "files": [],
+  "types": [
+    "node"
+  ]
 }

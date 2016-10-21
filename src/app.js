@@ -13,7 +13,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop)
   // Drawing code goes here
   game.update()
-  game.draw()
 }
 gameLoop()
 

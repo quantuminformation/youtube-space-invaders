@@ -5,8 +5,9 @@
   "main": "webpack.config.js",
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "^6.0.45",
     "css-loader": "^0.25.0",
-    "html-webpack-plugin": "^2.22.0",
+    "html-webpack-plugin": "https://github.com/ampedandwired/html-webpack-plugin",
     "style-loader": "^0.13.1",
     "ts-loader": "^0.9.0",
     "typescript": "^2.0.3",

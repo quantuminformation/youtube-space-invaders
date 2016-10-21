@@ -1,5 +1,5 @@
 import {LightInvader, Invader} from "./gameObjects/Invaders";
-import {Vector2} from "./util/Math"
+import {Vector2, Vector2Normalised} from "./util/Math"
 
 let waves: Array<()=> Array<Invader>> = []
 
@@ -11,11 +11,11 @@ let initialYOffset = 20;
 
 waves.push(function () {
   for (var i = 0; i <= 7; i++) {
-    for (var j = 0; j <= 3; j++) {
+    for (var j = 0; j <= 2; j++) {
       let position = new Vector2(i * (Invader.DEFAULT_WIDTH + horizontalGap), (j * (Invader.DEFAULT_HEIGHT + verticalGap)))
       position = position.add(new Vector2(initialXOffset, initialYOffset))
       let invader: Invader = new LightInvader(position);
-      invader.movmentVector.x = Invader.DEFAULT_HORIZONTAL_SPEED;
+      invader.updateDirection(new Vector2Normalised(90))
       arr.push(invader);
     }
   }
