@@ -1,15 +1,16 @@
 import {Player} from "./gameObjects/Player"
-import {Vector2, Vector2Normalised} from "./util/Math"
+import {Vector2, Vector2Normalised} from "./util/Vectors"
 import {KEY_CODES} from "./constants/Keycodes"
 import * as GameSettings from "./constants/GameSettings"
 import {GAME_OVER, INITIALISING, BATTLE_MODE, YOU_WIN} from "./constants/GameStates"
-import {Invader} from "./gameObjects/Invaders"
-import {BasicBullet, Bullet} from "./gameObjects/Bullets"
-import Waves from "./Waves"
+import {Bullet} from "./gameObjects/Bullets"
+import {WaveManager} from "./story/WaveManager"
 import {rectCollides} from "./util/CollisionDetection";
 import {IGameObject} from "./gameObjects/IGameObject";
 import {LARGE_FONT_SIZE} from "./constants/GameSettings";
 import {MEDIUM_FONT_SIZE} from "./constants/GameSettings";
+import {AbstractInvader} from "./gameObjects/AbstractInvader";
+import {degreesToRadians} from "./util/Conversions";
 
 export class Game {
   static ASPECT_RATIO: number = 1 // keep it square for now
@@ -20,17 +21,20 @@ export class Game {
   static gameState = INITIALISING
   static score: number = 0
 
+  waveManager = new WaveManager()
   player: Player
   playerOffsetHeight: number = 20
   playerBullets: Array<Bullet> = [];
 
-  invaders: Array <Invader>
+  invaders: Array <AbstractInvader>
   invaderBullets: Array<Bullet> = [];
 
 
   canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('canvas')
 
   context2D: CanvasRenderingContext2D
+  background = new Image()
+
 
   spaceColor: string = "black"
 
@@ -46,6 +50,7 @@ export class Game {
     this.context2D = this.canvas.getContext("2d")
     this.canvas.width = Game.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / Game.ASPECT_RATIO
+    this.background.src = require('file?name=sunrise.jpg!./images/backgrounds/sunrise.jpg')
 
     //all keys are down to start
     for (let code in KEY_CODES) {
@@ -84,7 +89,11 @@ export class Game {
     this.handleCollisions();
 
     if (this.invaders.length === 0) {
-      Game.gameState = YOU_WIN
+      this.invaders = this.waveManager.getNextWave()
+      if (!this.invaders) {
+        Game.gameState = YOU_WIN
+        return
+      }
     }
 
     this.drawBattleScene()
@@ -105,6 +114,7 @@ export class Game {
     this.context2D.font = LARGE_FONT_SIZE + "px Verdana";
     this.context2D.fillText("Game over!", 5, 25);
   }
+
   drawYouWin() {
     this.context2D.fillStyle = '#FF0';
     this.context2D.font = LARGE_FONT_SIZE + "px Verdana";
@@ -123,12 +133,14 @@ export class Game {
     //bottom middle
     this.player = new Player(new Vector2(Game.CANVAS_WIDTH / 2,
       this.canvas.height - this.playerOffsetHeight - Player.DEFAULT_HEIGHT))
-    this.nextWave();
+    this.invaders = this.waveManager.getNextWave()
+
   }
 
   drawBackground() {
     this.context2D.fillStyle = this.spaceColor
     this.context2D.fillRect(0, 0, Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT)
+    this.context2D.drawImage(this.background, -200, 0)
   }
 
   drawScore() {
@@ -144,7 +156,7 @@ export class Game {
     this.player.draw(this.context2D)
 
     let self = this;
-    this.invaders.forEach(function (thing: Invader) {
+    this.invaders.forEach(function (thing: AbstractInvader) {
       thing.draw(self.context2D);
     });
     this.playerBullets.forEach(function (thing: Bullet) {
@@ -158,10 +170,34 @@ export class Game {
 
   updatePlayer(elapsedTime: number) {
     if (this.keyStatus[KEY_CODES.LEFT]) {
-      this.player.updateDirection(new Vector2Normalised(270))
+      if (this.keyStatus[KEY_CODES.UP]) {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)))
+      }
+      else if (this.keyStatus[KEY_CODES.DOWN]) {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(225)))
+      } else {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(270)))
+      }
     }
     else if (this.keyStatus[KEY_CODES.RIGHT]) {
-      this.player.updateDirection(new Vector2Normalised(90))
+
+
+      if (this.keyStatus[KEY_CODES.UP]) {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(45)))
+      }
+      else if (this.keyStatus[KEY_CODES.DOWN]) {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(135)))
+      } else {
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(90)))
+      }
+
+
+    }
+    else if (this.keyStatus[KEY_CODES.UP]) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(0)))
+    }
+    else if (this.keyStatus[KEY_CODES.DOWN]) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(180)))
     }
     else {
       this.player.remainStationary()
@@ -195,7 +231,7 @@ export class Game {
       return
     }
 
-    this.invaders.forEach(function (enemy: Invader) {
+    this.invaders.forEach(function (enemy: AbstractInvader) {
       //moving to the right
       enemy.position.x -= outOfBoundsBy
       enemy.reverse()
@@ -210,21 +246,16 @@ export class Game {
       return enemy.active;
     });
 
-    self.invaders.forEach(function (enemy: Invader) {
+    self.invaders.forEach(function (enemy: AbstractInvader) {
       enemy.update(elapsedUnit);// this might move things out of bounds so check next
       //  self.clamp(enemy)
     });
 
     self.ReverseEnemyDirectionIfOutOfBoundsAndDropDown();
-    self.invaders.forEach(function (invader: Invader) {
+    self.invaders.forEach(function (invader: AbstractInvader) {
 
       if (Math.random() < invader.probabilityOfShooting) {
-        var fire = invader.shootAhead();
-        if (fire.hasOwnProperty("length")) {
-          self.invaderBullets = self.invaderBullets.concat(fire);
-        } else {
-          self.invaderBullets.push(fire);
-        }
+        self.invaderBullets = self.invaderBullets.concat(invader.shootAhead());
       }
     });
   }
@@ -247,18 +278,10 @@ export class Game {
 
   }
 
-  nextWave() {
-    this.invaders = Waves.shift()();
-    if (!this.invaders) {
-      Game.gameState = YOU_WIN
-    }
-  }
-
-
   handleCollisions() {
     var self = this;
     self.playerBullets.forEach(function (bullet: Bullet) {
-        self.invaders.forEach(function (invader: Invader) {
+        self.invaders.forEach(function (invader: AbstractInvader) {
           if (rectCollides(bullet, invader)) {
             invader.takeHit(bullet);
             bullet.active = false;

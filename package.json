@@ -3,18 +3,22 @@
   "version": "1.0.0",
   "description": "Simple setup for client-only projects",
   "main": "webpack.config.js",
-  "dependencies": {},
+  "dependencies": {
+    "normalize.css": "^5.0.0"
+  },
   "devDependencies": {
     "@types/node": "^6.0.45",
     "css-loader": "^0.25.0",
     "html-webpack-plugin": "https://github.com/ampedandwired/html-webpack-plugin",
     "style-loader": "^0.13.1",
-    "ts-loader": "^0.9.0",
+    "ts-loader": "^1.0.0",
     "typescript": "^2.0.3",
     "webpack": "^2.1.0-beta.25"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch --watch-poll"
+
   },
   "repository": {
     "type": "git",

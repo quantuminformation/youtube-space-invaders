@@ -1,5 +1,5 @@
 import {Game}  from "../Game";
-import {Vector2, Dimensions2, Vector2Normalised} from "../util/Math"
+import {Vector2, Dimensions2, Vector2Normalised} from "../util/Vectors"
 import {IGameObject} from "./IGameObject"
 import * as GameSettings from "../constants/GameSettings"
 
@@ -33,7 +33,7 @@ export abstract class Bullet implements IGameObject {
 }
 
 export class BasicBullet extends Bullet {
-  constructor(public position: Vector2,  directionVector: Vector2) {
+  constructor(public position: Vector2,  directionVector: Vector2Normalised) {
     super(position, directionVector);
     this.dimensions = new Dimensions2(Bullet.SMALL_SIZE, Bullet.SMALL_SIZE);
     this.color = "white";

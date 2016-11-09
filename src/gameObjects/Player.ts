@@ -1,5 +1,5 @@
 import {IGameObject} from "./IGameObject"
-import {Vector2, Dimensions2, Vector2Normalised} from "../util/Math"
+import {Vector2, Dimensions2, Vector2Normalised} from "../util/Vectors"
 import {Bullet, BasicBullet} from "./Bullets";
 import {MEDIUM_MOVEMENT_SPEED} from "../constants/GameSettings";
 import {GAME_OVER} from "../constants/GameStates";
@@ -22,7 +22,7 @@ export class Player implements IGameObject {
   health: number = 3
   lastShotTime: number = 0
 
-  fireRatePerSec = 2
+  fireRatePerSec = 4
 
   constructor(position) {
     this.position = position
@@ -41,9 +41,14 @@ export class Player implements IGameObject {
     return new Vector2(this.position.x + this.dimensions.width / 2, this.position.y + this.dimensions.height / 2)
   }
 
-  //todo
   explode() {
     Game.gameState = GAME_OVER
+    var myAudio = document.createElement("audio");
+
+    //myAudio.src = require('file?name=playerExplosion.mp3!../audio/playerExplosion.mp3')
+
+    //todo
+    //myAudio.play();
   }
 
   shootAhead(): Bullet {

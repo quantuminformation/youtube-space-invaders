@@ -5,3 +5,11 @@
   overflow: hidden;
   text-align: center;
 }
+
+body{
+  background-color: black;
+  color: #50d8ff;
+}
+a{
+  color: #50d8ff;
+}

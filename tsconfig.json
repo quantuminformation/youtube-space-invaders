@@ -4,7 +4,9 @@
     "sourceMap": true
   },
   "files": [],
+  "alwaysStrict": true,
   "types": [
     "node"
   ]
+
 }

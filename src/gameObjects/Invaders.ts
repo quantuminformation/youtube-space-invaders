@@ -1,75 +1,61 @@
-import {Vector2, Dimensions2, Vector2Normalised} from "../util/Math"
-import {IGameObject} from "./IGameObject"
+import {Vector2, Dimensions2, Vector2Normalised, getFanSpreadVectors} from "../util/Vectors"
 import {Bullet, BasicBullet} from "./Bullets"
-import {MEDIUM_MOVEMENT_SPEED, SLOW_MOVEMENT_SPEED, VERY_SLOW_MOVEMENT_SPEED} from "../constants/GameSettings"
-import {Game} from "../Game";
+import {AbstractInvader} from "./AbstractInvader";
+import {degreesToRadians} from "../util/Conversions";
 
-export abstract class Invader implements IGameObject {
-  health: number
+export class LightInvader extends AbstractInvader {
 
-  static DEFAULT_HEIGHT: number = 20
-  static DEFAULT_WIDTH: number = 30
+  constructor(position: Vector2 = new Vector2(0, 0)) {
+    super(position)
+    this.probabilityOfShooting = 0.001
+    this.health = 1
+    this.pointsValue = 10
 
-  dimensions: Dimensions2 = new Dimensions2(Invader.DEFAULT_WIDTH, Invader.DEFAULT_HEIGHT)
-  private directionVector: Vector2 = new Vector2(0, 0)
+    this.image.src = require('file?name=LightInvader.svg!../images/lightInvader.svg')
+  }
+}
 
-  active: boolean = true
-  probabilityOfShooting: number = 0.0005 // on each game frame
+export class MediumInvader extends AbstractInvader {
 
-  BasicColor: string
-  pointsValue:number
+  constructor(position: Vector2 = new Vector2(0, 0)) {
+    super(position)
+    this.probabilityOfShooting = 0.002
+    this.health = 3
+    this.pointsValue = 30
 
-  constructor(public position:Vector2) {
+    this.image.src = require('file?name=MediumInvader.svg!../images/MediumInvader.svg')
+  }
+}
+export class HeavyInvader extends AbstractInvader {
+
+  constructor(position: Vector2 = new Vector2(0, 0)) {
+    super(position)
+    this.probabilityOfShooting = 0.004
+    this.pointsValue = 60
+
+    this.health = 5
+    this.image.src = require('file?name=HeavyInvader.svg!../images/HeavyInvader.svg')
   }
 
-  draw(canvas: CanvasRenderingContext2D) {
-    canvas.fillStyle = this.BasicColor
-    canvas.fillRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height)
-  }
-
-  midpoint() {
-    return new Vector2(this.position.x + this.dimensions.width / 2, this.position.y + this.dimensions.height / 2)
-  }
-
-  explode() {
-    this.active = false
-    Game.score += this.pointsValue
-    // todo boom graphic
-  }
-  reverse() {
-    this.directionVector.x =  -this.directionVector.x
-    this.directionVector.y =  -this.directionVector.y
-    // todo boom graphic
-  }
-
-  updateDirection(directionVector:Vector2Normalised){
-    this.directionVector = directionVector
-  }
-
-  update(elapsedUnit) {
-    this.position.x += this.directionVector.x * elapsedUnit * VERY_SLOW_MOVEMENT_SPEED
-  }
-
-  shootAhead() {
+  shootAhead(): Array<Bullet> {
     // todo Sound.play("shoot")
-    return new BasicBullet(this.midpoint(), new Vector2(0, 1))
-  }
-  takeHit(bullet:Bullet) {
-    this.health -= bullet.damageInflicted
-    if (this.health <= 0) {
-      this.explode()
+
+    let self = this
+    let x = Math.random();
+
+    if (x >= 0 && x <= 0.75) {
+      return [new BasicBullet(this.midpoint(), new Vector2Normalised(0))]
+    }
+
+    else {
+      let vectors = getFanSpreadVectors(10, degreesToRadians(45))
+      let bulletsToFire: Array < Bullet > = []
+      vectors.forEach(item=> {
+        let b = new BasicBullet(this.midpoint(), new Vector2Normalised(this.facingAngleRad + item.angle()))
+        bulletsToFire.push(b)
+      })
+      return bulletsToFire
     }
   }
 }
 
-export class LightInvader extends Invader {
-
-  constructor(position: Vector2) {
-    super(position)
-    this.BasicColor = "#0F9"
-    this.probabilityOfShooting = 0.001
-    this.health = 1
-    this.pointsValue = 10
-  }
-
-}
