@@ -11,7 +11,10 @@ export class LightInvader extends AbstractInvader {
     this.health = 1
     this.pointsValue = 10
 
-    this.image.src = require('file?name=LightInvader.svg!../images/lightInvader.svg')
+    this.image.src = require('url-loader?limit=10000!../images/lightInvader.svg')
+
+
+
   }
 }
 
@@ -23,7 +26,7 @@ export class MediumInvader extends AbstractInvader {
     this.health = 3
     this.pointsValue = 30
 
-    this.image.src = require('file?name=MediumInvader.svg!../images/MediumInvader.svg')
+    this.image.src = require('url-loader?limit=10000!../images/MediumInvader.svg')
   }
 }
 export class HeavyInvader extends AbstractInvader {
@@ -34,7 +37,7 @@ export class HeavyInvader extends AbstractInvader {
     this.pointsValue = 60
 
     this.health = 5
-    this.image.src = require('file?name=HeavyInvader.svg!../images/HeavyInvader.svg')
+    this.image.src = require('url-loader?limit=10000!../images/HeavyInvader.svg')
   }
 
   shootAhead(): Array<Bullet> {

@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "sourceMap": true
+    "target": "es5"
   },
-  "files": [],
+  "include": ["./src/**/*.ts"],
   "alwaysStrict": true,
   "types": [
     "node"

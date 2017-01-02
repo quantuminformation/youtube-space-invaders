@@ -23,7 +23,7 @@ export class Vector2 {
   }
 
   public magnitude(): number {
-    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
+    return Math.sqrt(this.x ** 2 + this.y ** 2)
   }
 
   public angle(): number {

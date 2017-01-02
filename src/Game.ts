@@ -5,12 +5,13 @@ import * as GameSettings from "./constants/GameSettings"
 import {GAME_OVER, INITIALISING, BATTLE_MODE, YOU_WIN} from "./constants/GameStates"
 import {Bullet} from "./gameObjects/Bullets"
 import {WaveManager} from "./story/WaveManager"
-import {rectCollides} from "./util/CollisionDetection";
-import {IGameObject} from "./gameObjects/IGameObject";
-import {LARGE_FONT_SIZE} from "./constants/GameSettings";
-import {MEDIUM_FONT_SIZE} from "./constants/GameSettings";
-import {AbstractInvader} from "./gameObjects/AbstractInvader";
-import {degreesToRadians} from "./util/Conversions";
+import {rectCollides} from "./util/CollisionDetection"
+import {IGameObject} from "./gameObjects/IGameObject"
+import {LARGE_FONT_SIZE} from "./constants/GameSettings"
+import {MEDIUM_FONT_SIZE} from "./constants/GameSettings"
+import {AbstractInvader} from "./gameObjects/AbstractInvader"
+import {degreesToRadians} from "./util/Conversions"
+import {PlayerBase, DestructibleScenery} from "./gameObjects/PlayerBase"
 
 export class Game {
   static ASPECT_RATIO: number = 1 // keep it square for now
@@ -24,10 +25,12 @@ export class Game {
   waveManager = new WaveManager()
   player: Player
   playerOffsetHeight: number = 20
-  playerBullets: Array<Bullet> = [];
+  playerBullets: Bullet[] = []
+  bases: PlayerBase[] = []
 
-  invaders: Array <AbstractInvader>
-  invaderBullets: Array<Bullet> = [];
+
+  invaders: AbstractInvader[]
+  invaderBullets: Bullet[] = [];
 
 
   canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('canvas')
@@ -50,7 +53,7 @@ export class Game {
     this.context2D = this.canvas.getContext("2d")
     this.canvas.width = Game.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / Game.ASPECT_RATIO
-    this.background.src = require('file?name=sunrise.jpg!./images/backgrounds/sunrise.jpg')
+    this.background.src = require('url-loader?limit=10000!./images/backgrounds/sunrise.jpg')
 
     //all keys are down to start
     for (let code in KEY_CODES) {
@@ -86,6 +89,7 @@ export class Game {
     this.updatePlayer(elapsedReduced)
     this.updateEnemies(elapsedReduced);
     this.updateBullets(elapsedReduced);
+    this.updateBases();
     this.handleCollisions();
 
     if (this.invaders.length === 0) {
@@ -97,8 +101,35 @@ export class Game {
     }
 
     this.drawBattleScene()
-
     this.lastFrame = start
+  }
+
+  /**
+   * We want equally spaced bases  like this:
+   *
+   *
+   * |                                        |
+   * |                                        |
+   * |                                        |
+   * |                                        |
+   * |     ###           ###          ###     |
+   * |                                        |
+   * |                                        |
+   * |                                        |
+   *
+   */
+  createBases(noOfBases: number, containedWithinDimensions: Vector2, edgeSpace: number = 40) {
+    let bases: PlayerBase[] = [];// clear old one if there
+    for (var i = 0; i < noOfBases; i++) {
+      this.bases.push(new PlayerBase(containedWithinDimensions));
+    }
+    var freeSpace = Game.CANVAS_WIDTH - edgeSpace * 2 - noOfBases * this.bases[0].actualDimensions.x;
+    let spaceBetween = freeSpace/(noOfBases - 1)
+    //assume that all bases are same size
+    for (var i = 0; i < noOfBases; i++) {
+      let nextPos: Vector2 = new Vector2(i *  (this.bases[0].actualDimensions.x + spaceBetween) + edgeSpace, 500)
+      this.bases[i].transform(nextPos);
+    }
   }
 
 
@@ -134,7 +165,19 @@ export class Game {
     this.player = new Player(new Vector2(Game.CANVAS_WIDTH / 2,
       this.canvas.height - this.playerOffsetHeight - Player.DEFAULT_HEIGHT))
     this.invaders = this.waveManager.getNextWave()
+    this.createBases(3, new Vector2(100, 30))
+  }
 
+  /**
+   * Remove scenery that has been hit
+   */
+  updateBases() {
+    var self = this;
+    self.bases.forEach(function (base: PlayerBase) {
+      base.allDestructibleScenery = base.allDestructibleScenery.filter(function (particle) {
+        return particle.active;
+      });
+    });
   }
 
   drawBackground() {
@@ -153,7 +196,6 @@ export class Game {
 
   drawBattleScene() {
     this.drawScore()
-    this.player.draw(this.context2D)
 
     let self = this;
     this.invaders.forEach(function (thing: AbstractInvader) {
@@ -165,6 +207,10 @@ export class Game {
     this.invaderBullets.forEach(function (thing: Bullet) {
       thing.draw(self.context2D);
     });
+    this.bases.forEach(function (thing: PlayerBase) {
+      thing.draw(self.context2D);
+    });
+    this.player.draw(this.context2D)
   }
 
 
@@ -217,7 +263,7 @@ export class Game {
 
   ReverseEnemyDirectionIfOutOfBoundsAndDropDown(): void {
     let outOfBoundsBy = 0
-    this.invaders.forEach(item=> {
+    this.invaders.forEach(item => {
       if (item.position.x < 0) {
         outOfBoundsBy = item.position.x
         return
@@ -287,6 +333,16 @@ export class Game {
             bullet.active = false;
           }
         });
+        self.bases.forEach(function (base: PlayerBase) {
+
+          base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
+            if (rectCollides(bullet, particle)) {
+              particle.explode();
+              bullet.active = false;
+            }
+          })
+        })
+
       }
     );
 
@@ -296,6 +352,14 @@ export class Game {
         var postionCopy = JSON.parse(JSON.stringify(self.player.position))
         bullet.active = false;
       }
+      self.bases.forEach(function (base: PlayerBase) {
+        base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
+          if (rectCollides(bullet, particle)) {
+            particle.explode();
+            bullet.active = false;
+          }
+        })
+      })
     });
   }
 
