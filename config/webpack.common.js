@@ -12,7 +12,7 @@ const PATHS = {
 module.exports = {
 
   entry: {
-    app: PATHS.src + '/app.js'
+    app: PATHS.src + '/App.ts'
   },
   output: {
     path: PATHS.build,
@@ -36,9 +36,14 @@ module.exports = {
         // An array of paths or an individual path
           include: PATHS.src + "images"
       },
+
       {
-        test: /\.css/,
-        loader: "style-loader!css-loader"
+        test: /\.p?css$/,
+        loaders: [
+          'style-loader',
+          'css-loader?importLoaders=1,url=false',
+          'postcss-loader'
+        ]
       }
     ]
   },

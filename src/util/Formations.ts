@@ -1,6 +1,6 @@
-import {IGameObject} from "../gameObjects/IGameObject";
-import {isSquare} from "./MathChecks";
-import {Vector2} from "./Vectors";
+import { IGameObject } from '../gameObjects/IGameObject'
+import { isSquare } from './MathChecks'
+import { Vector2 } from './Vectors'
 
 /**
  * modifys an array of objects so their position is in a triangle
@@ -17,13 +17,12 @@ import {Vector2} from "./Vectors";
  *    111
  *   11111
  *  1111111
-
  *
  * @param gameObjects
  */
-export function triangle(gameObjects: Array<IGameObject>, horizontalGap: number, verticalGap: number): void {
+export function triangle (gameObjects: Array<IGameObject>, horizontalGap: number, verticalGap: number): void {
   if (!isSquare(gameObjects.length)) {
-    throw new Error("needs perfect square number of units")
+    throw new Error('needs perfect square number of units')
   }
   let numberOfRows = Math.sqrt(gameObjects.length)
 
@@ -45,14 +44,13 @@ export function triangle(gameObjects: Array<IGameObject>, horizontalGap: number,
     thisRowStartingIndex = thisRowStartingIndex + numberOnThisRow
   }
 }
-export function rectangle(gameObjects: Array<IGameObject>, itemsPerRow, horizontalGap: number, verticalGap: number): void {
+export function rectangle (gameObjects: Array<IGameObject>, itemsPerRow, horizontalGap: number, verticalGap: number): void {
 
   let numberOfRows = gameObjects.length / itemsPerRow
 
   if (numberOfRows % 1 !== 0) {
-    throw new Error("number / itemsPerRow must fit")
+    throw new Error('number / itemsPerRow must fit')
   }
-
 
   let nextRowOffset = new Vector2(0, 0)
   let thisRowStartingIndex = 0
@@ -69,7 +67,6 @@ export function rectangle(gameObjects: Array<IGameObject>, itemsPerRow, horizont
 
     nextRowOffset = nextRowOffset.addTwo(0, maxHeight + verticalGap)
     thisRowStartingIndex = thisRowStartingIndex + itemsPerRow
-
 
   }
 }

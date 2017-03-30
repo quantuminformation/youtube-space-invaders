@@ -1,18 +1,23 @@
 {
   "name": "youtube-space-invaders",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple setup for client-only projects",
   "main": "webpack.config.js",
-  "dependencies": {
-    "normalize.css": "^5.0.0"
-  },
   "devDependencies": {
-    "@types/node": "^6.0.45",
-    "css-loader": "^0.26.1",
-    "html-webpack-plugin": "https://github.com/ampedandwired/html-webpack-plugin",
-    "style-loader": "^0.13.1",
-    "ts-loader": "^1.0.0",
-    "tslint": "^4.2.0",
+    "css-loader": "^0.28.0",
+    "css-variables": "^0.1.0",
+    "html-webpack-plugin": "^2.24.1",
+    "normalize.css": "^6.0.0",
+    "postcss-calc": "^5.3.1",
+    "postcss-css-variables": "^0.7.0",
+    "postcss-custom-media": "^5.0.1",
+    "postcss-import": "^9.1.0",
+    "postcss-loader": "^1.2.2",
+    "postcss-nested": "^1.0.0",
+    "pre-commit": "^1.2.2",
+    "style-loader": "^0.16.1",
+    "ts-loader": "^2.0.3",
+    "tslint": "^5.0.0",
     "typescript": "^2.0.3",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta.25",
@@ -20,7 +25,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tslint": "tslint ",
+    "lint": "tslint 'src/**/*.ts'",
     "start": "webpack --watch --watch-poll"
   },
   "repository": {
@@ -33,5 +38,10 @@
   "bugs": {
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
-  "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme"
+  "pre-commit": "lint",
+
+  "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
+  "dependencies": {
+    "tslint-config-standard": "^4.0.0"
+  }
 }
