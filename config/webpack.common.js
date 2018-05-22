@@ -1,13 +1,12 @@
-var path = require("path");
-var webpack = require("webpack");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var WebpackBuildNotifierPlugin = require("webpack-build-notifier");
-
+var path = require('path')
+var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var WebpackBuildNotifierPlugin = require('webpack-build-notifier')
 
 const PATHS = {
   src: path.join(__dirname, '../src'),
   build: path.join(__dirname, '../build')
-};
+}
 
 module.exports = {
 
@@ -18,22 +17,25 @@ module.exports = {
     path: PATHS.build,
     filename: '[name].js'
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'awesome-typescript-loader'
       },
 
       {
         test: /\.(jpg|png|svg)$/,
-        use: 'url-loader',
-        options: {
-          limit: 25000
-        },
-        // An array of paths or an individual path
-        include: PATHS.src + "images"
+        include: PATHS.src + "images",
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 25000
+            }
+          }
+        ]
       },
       {
         test: /\.p?css$/,
@@ -56,17 +58,17 @@ module.exports = {
   },
   resolve: {
     // you can now require('file') instead of require('file.js')
-    extensions: ['.ts', '.js', '.json']
+    extensions: [ '.ts', '.js', '.json' ]
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Webpack boilerplate',
       hash: true,
       filename: 'index.html',
-      template: PATHS.src + '/index.html',
+      template: PATHS.src + '/index.html'
     }),
     new WebpackBuildNotifierPlugin({
-      title: "My Project Webpack Build"
+      title: 'My Project Webpack Build'
     })
   ]
-};
+}
