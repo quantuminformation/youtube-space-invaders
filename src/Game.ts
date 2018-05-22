@@ -30,7 +30,7 @@ export class Game {
   invaders: AbstractInvader[]
   invaderBullets: Bullet[] = []
 
-  canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement
+  canvas: HTMLCanvasElement
 
   context2D: CanvasRenderingContext2D
   background = new Image()
@@ -44,7 +44,8 @@ export class Game {
   /**
    * Basically we figure out the best width for our canvas at start up.
    */
-  constructor () {
+  constructor (hostElement: HTMLCanvasElement) {
+    this.canvas = hostElement
     new Date().getTime()
     this.context2D = this.canvas.getContext('2d')
     this.canvas.width = Game.CANVAS_WIDTH

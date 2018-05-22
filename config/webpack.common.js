@@ -12,21 +12,20 @@ const PATHS = {
 module.exports = {
 
   entry: {
-    app: PATHS.src + '/App.ts'
+    app: PATHS.src + '/Game.ts'
   },
   output: {
     path: PATHS.build,
     filename: '[name].js'
   },
-
-
   devtool: "source-map",
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader'
+        loader: 'awesome-typescript-loader',
       },
+
       {
         test: /\.(jpg|png|svg)$/,
         use: 'url-loader',
@@ -34,15 +33,23 @@ module.exports = {
           limit: 25000
         },
         // An array of paths or an individual path
-          include: PATHS.src + "images"
+        include: PATHS.src + "images"
       },
-
       {
         test: /\.p?css$/,
-        loaders: [
-          'style-loader',
-          'css-loader?importLoaders=1,url=false',
-          'postcss-loader'
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1, url: false
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
         ]
       }
     ]

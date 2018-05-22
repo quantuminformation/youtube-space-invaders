@@ -24,13 +24,10 @@ export abstract class Bullet implements IGameObject {
       this.position.y >= 0 && (this.position.y - this.dimensions.height <= Game.CANVAS_HEIGHT)
   }
 
-  // tslint:disable-next-line
-  draw (canvas: CanvasRenderingContext2D) {
-  }
+  abstract draw (canvas: CanvasRenderingContext2D)
 
-// tslint:disable-next-line
-  update (elapsedUnit) {
-  }
+  abstract update (elapsedUnit)
+
 }
 
 export class BasicBullet extends Bullet {

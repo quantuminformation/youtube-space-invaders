@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../build/solar-popup.js"></script>
+  <link href="../build/solar-popup.css" rel="stylesheet">
+</head>
+<body>
+<button onclick="showSimplePopup()">Click me to trigger the popup programmatically</button>
+<button onclick="showBigPopup()">Click me for a larger example with a form</button><br><br>
+
+<div style="background-color: #57ff22; height: 200px;">Some other content</div>
+<div style="background-color: red; height: 200px;">Some other content</div>
+<div style="background-color: #e1ffe9; height: 200px;">Some other content</div>
+
+</body>
+<script type="text/javascript">
+
+  function showSimplePopup() {
+    var child = document.createElement('DIV')
+    child.innerHTML =
+      `<p>This is some content that can be supplied to the popup</p>
+           <p>Also press the [ESC] key to close]</p>
+           <button type="submit">Clicking a submit button will also close it</button>
+        `
+    var popup = new SolarPopup.default(child)
+    popup.show(child)
+  }
+
+  function showBigPopup() {
+    var child = document.createElement('DIV')
+    child.innerHTML =
+      `<form>
+              <h3>Some amazing form</h3>
+              <p>The submit won't fire until all the fields are valid</p>
+              <div class="form-group">
+                <input type="number"  required placeholder="Project budget">
+                <input type="range"  required placeholder="Project range">
+                <input type="date"  required placeholder="Project date">
+                <input type="reset">
+              </div>
+
+
+              <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe"
+                                        class="btn btn-success" style="margin-top: 10px"></div>
+            </div>
+          </form>
+        `
+    var popup = new SolarPopup.default(child)
+    popup.show(child)
+  }
+  showBigPopup()
+
+</script>
+</html>
