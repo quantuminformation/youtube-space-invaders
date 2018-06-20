@@ -11,11 +11,14 @@ const PATHS = {
 module.exports = {
 
   entry: {
-    app: PATHS.src + '/Game.ts'
+    spaceInvaders: PATHS.src + '/Game.ts'
   },
+  mode:'development',
   output: {
     path: PATHS.build,
-    filename: '[name].js'
+    filename: '[name].js',
+    library: 'SpaceInvaders',
+    libraryTarget: 'umd'
   },
   devtool: 'source-map',
   module: {
