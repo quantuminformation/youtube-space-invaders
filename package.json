@@ -25,7 +25,7 @@
     "url-loader": "^1.0.1",
     "webpack": "^4.8.3",
     "webpack-build-notifier": "^0.1.25",
-    "webpack-cli": "^2.1.3"
+    "webpack-cli": "^3.0.8"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -46,6 +46,6 @@
   "pre-commit": "lint",
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {
-    "tslint-config-standard": "^4.0.0"
+    "tslint-config-standard": "^7.0.0"
   }
 }

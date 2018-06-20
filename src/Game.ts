@@ -7,8 +7,6 @@ import { Bullet } from './gameObjects/Bullets'
 import { WaveManager } from './story/WaveManager'
 import { rectCollides } from './util/CollisionDetection'
 import { IGameObject } from './gameObjects/IGameObject'
-import { LARGE_FONT_SIZE } from './constants/GameSettings'
-import { MEDIUM_FONT_SIZE } from './constants/GameSettings'
 import { AbstractInvader } from './gameObjects/AbstractInvader'
 import { degreesToRadians } from './util/Conversions'
 import { PlayerBase, DestructibleScenery } from './gameObjects/PlayerBase'
@@ -130,20 +128,20 @@ export class Game {
 
   drawInit () {
     this.context2D.fillStyle = '#0FF'
-    this.context2D.font = LARGE_FONT_SIZE + 'px Verdana'
+    this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('Loading..', 5, 25)
     Game.gameState = BATTLE_MODE
   }
 
   drawGameOver () {
     this.context2D.fillStyle = '#F00'
-    this.context2D.font = LARGE_FONT_SIZE + 'px Verdana'
+    this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('Game over!', 5, 25)
   }
 
   drawYouWin () {
     this.context2D.fillStyle = '#FF0'
-    this.context2D.font = LARGE_FONT_SIZE + 'px Verdana'
+    this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('YOU win!', 5, 25)
   }
 
@@ -183,7 +181,7 @@ export class Game {
 
   drawScore () {
     this.context2D.fillStyle = '#0FF'
-    this.context2D.font = MEDIUM_FONT_SIZE + 'px Verdana'
+    this.context2D.font = GameSettings.MEDIUM_FONT_SIZE + 'px Verdana'
     this.context2D.fillText(`Score: ${Game.score}`, 2, 14)
     this.context2D.fillText(`Health: ${this.player.health}`, 2, Game.CANVAS_HEIGHT - 6)
 
@@ -310,23 +308,22 @@ export class Game {
   handleCollisions () {
     let self = this
     self.playerBullets.forEach(function (bullet: Bullet) {
-        self.invaders.forEach(function (invader: AbstractInvader) {
-          if (rectCollides(bullet, invader)) {
-            invader.takeHit(bullet)
+      self.invaders.forEach(function (invader: AbstractInvader) {
+        if (rectCollides(bullet, invader)) {
+          invader.takeHit(bullet)
+          bullet.active = false
+        }
+      })
+      self.bases.forEach(function (base: PlayerBase) {
+
+        base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
+          if (rectCollides(bullet, particle)) {
+            particle.explode()
             bullet.active = false
           }
         })
-        self.bases.forEach(function (base: PlayerBase) {
-
-          base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
-            if (rectCollides(bullet, particle)) {
-              particle.explode()
-              bullet.active = false
-            }
-          })
-        })
-
-      }
+      })
+    }
     )
 
     self.invaderBullets.forEach(function (bullet: Bullet) {

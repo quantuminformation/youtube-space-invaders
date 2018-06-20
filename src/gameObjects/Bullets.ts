@@ -20,7 +20,7 @@ export abstract class Bullet implements IGameObject {
   }
 
   inBounds () {
-    return this.position.x >= 0 && (this.position.x - this.dimensions.width <= Game.CANVAS_WIDTH ) &&
+    return this.position.x >= 0 && (this.position.x - this.dimensions.width <= Game.CANVAS_WIDTH) &&
       this.position.y >= 0 && (this.position.y - this.dimensions.height <= Game.CANVAS_HEIGHT)
   }
 

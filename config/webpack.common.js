@@ -68,7 +68,8 @@ module.exports = {
       title: 'Webpack boilerplate',
       hash: true,
       filename: 'index.html',
-      template: PATHS.src + '/index.html'
+      template: PATHS.src + '/index.html',
+      scripts:['./demo.js']
     }),
     new WebpackBuildNotifierPlugin({
       title: 'My Project Webpack Build'
