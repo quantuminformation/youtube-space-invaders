@@ -75,4 +75,4 @@ export class Player implements IGameObject {
 }
 
 let img = new Image()
-img.src = require('url-loader?limit=10000!../images/player.svg')
+img.src = require('../images/player.svg')

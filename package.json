@@ -5,11 +5,6 @@
   "main": "webpack.config.js",
   "devDependencies": {
     "@types/node": "^10.1.2",
-    "awesome-typescript-loader": "^5.0.0",
-    "css-loader": "^0.28.11",
-    "css-variables": "^0.1.0",
-    "file-loader": "^1.1.11",
-    "html-webpack-plugin": "^3.2.0",
     "normalize.css": "^8.0.0",
     "postcss-calc": "^6.0.1",
     "postcss-css-variables": "^0.8.1",
@@ -21,8 +16,7 @@
     "style-loader": "^0.21.0",
     "ts-loader": "^4.3.0",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3",
-    "url-loader": "^1.0.1",
+    "typescript": "^2.9.2",
     "webpack": "^4.8.3",
     "webpack-build-notifier": "^0.1.25",
     "webpack-cli": "^3.0.8"
@@ -31,7 +25,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack --watch --watch-poll",
-    "build": "webpack "
+    "build": "parcel ./src/Game --target node --public-url ./dist --target=browser"
   },
   "repository": {
     "type": "git",
@@ -46,6 +40,8 @@
   "pre-commit": "lint",
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {
+    "parcel-bundler": "^1.9.2",
+    "parcel-plugin-typescript": "^1.0.0",
     "tslint-config-standard": "^7.0.0"
   }
 }

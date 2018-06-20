@@ -48,7 +48,7 @@ export class Game {
     this.context2D = this.canvas.getContext('2d')
     this.canvas.width = Game.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / Game.ASPECT_RATIO
-    this.background.src = require('url-loader?limit=10000!./images/backgrounds/sunrise.jpg')
+    this.background.src = require('./images/backgrounds/sunrise.jpg')
 
     // all keys are down to start
     for (let code in KEY_CODES) {
