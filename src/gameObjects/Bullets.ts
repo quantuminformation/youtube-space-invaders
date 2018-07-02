@@ -1,4 +1,4 @@
-import { Game } from '../Game'
+import { SpaceInvaders } from '../SpaceInvaders'
 import { Vector2, Dimensions2, Vector2Normalised } from '../util/Vectors'
 import { IGameObject } from './IGameObject'
 import * as GameSettings from '../constants/GameSettings'
@@ -20,8 +20,8 @@ export abstract class Bullet implements IGameObject {
   }
 
   inBounds () {
-    return this.position.x >= 0 && (this.position.x - this.dimensions.width <= Game.CANVAS_WIDTH) &&
-      this.position.y >= 0 && (this.position.y - this.dimensions.height <= Game.CANVAS_HEIGHT)
+    return this.position.x >= 0 && (this.position.x - this.dimensions.width <= SpaceInvaders.CANVAS_WIDTH) &&
+      this.position.y >= 0 && (this.position.y - this.dimensions.height <= SpaceInvaders.CANVAS_HEIGHT)
   }
 
   abstract draw (canvas: CanvasRenderingContext2D)

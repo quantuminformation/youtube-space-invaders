@@ -2,7 +2,7 @@ import { Vector2, Dimensions2, Vector2Normalised } from '../util/Vectors'
 import { IGameObject } from './IGameObject'
 import { Bullet, BasicBullet } from './Bullets'
 import * as GameSettings from '../constants/GameSettings'
-import { Game } from '../Game'
+import { SpaceInvaders } from '../SpaceInvaders'
 import { rotateAndPaintImage } from '../util/Canvas2D_tools'
 
 export abstract class AbstractInvader implements IGameObject {
@@ -36,7 +36,7 @@ export abstract class AbstractInvader implements IGameObject {
 
   explode () {
     this.active = false
-    Game.score += this.pointsValue
+    SpaceInvaders.score += this.pointsValue
     // todo boom graphic
   }
 

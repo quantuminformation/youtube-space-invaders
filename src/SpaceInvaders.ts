@@ -11,10 +11,10 @@ import { AbstractInvader } from './gameObjects/AbstractInvader'
 import { degreesToRadians } from './util/Conversions'
 import { PlayerBase, DestructibleScenery } from './gameObjects/PlayerBase'
 
-export class Game {
+export class SpaceInvaders {
   static ASPECT_RATIO: number = 1 // keep it square for now
   static CANVAS_WIDTH: number = 600
-  static CANVAS_HEIGHT: number = Game.CANVAS_WIDTH / Game.ASPECT_RATIO
+  static CANVAS_HEIGHT: number = SpaceInvaders.CANVAS_WIDTH / SpaceInvaders.ASPECT_RATIO
 
   static gameState = INITIALISING
   static score: number = 0
@@ -46,8 +46,8 @@ export class Game {
     this.canvas = hostElement
     new Date().getTime()
     this.context2D = this.canvas.getContext('2d')
-    this.canvas.width = Game.CANVAS_WIDTH
-    this.canvas.height = this.canvas.width / Game.ASPECT_RATIO
+    this.canvas.width = SpaceInvaders.CANVAS_WIDTH
+    this.canvas.height = this.canvas.width / SpaceInvaders.ASPECT_RATIO
     this.background.src = require('./images/backgrounds/sunrise.jpg')
 
     // all keys are down to start
@@ -67,7 +67,7 @@ export class Game {
 
     this.drawBackground()
 
-    switch (Game.gameState) {
+    switch (SpaceInvaders.gameState) {
       case INITIALISING:
         this.drawInit()
         return
@@ -89,7 +89,7 @@ export class Game {
     if (this.invaders.length === 0) {
       this.invaders = this.waveManager.getNextWave()
       if (!this.invaders) {
-        Game.gameState = YOU_WIN
+        SpaceInvaders.gameState = YOU_WIN
         return
       }
     }
@@ -117,7 +117,7 @@ export class Game {
     for (let i = 0; i < noOfBases; i++) {
       this.bases.push(new PlayerBase(containedWithinDimensions))
     }
-    let freeSpace = Game.CANVAS_WIDTH - edgeSpace * 2 - noOfBases * this.bases[0].actualDimensions.x
+    let freeSpace = SpaceInvaders.CANVAS_WIDTH - edgeSpace * 2 - noOfBases * this.bases[0].actualDimensions.x
     let spaceBetween = freeSpace / (noOfBases - 1)
     // assume that all bases are same size
     for (let i = 0; i < noOfBases; i++) {
@@ -130,13 +130,13 @@ export class Game {
     this.context2D.fillStyle = '#0FF'
     this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('Loading..', 5, 25)
-    Game.gameState = BATTLE_MODE
+    SpaceInvaders.gameState = BATTLE_MODE
   }
 
   drawGameOver () {
     this.context2D.fillStyle = '#F00'
     this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
-    this.context2D.fillText('Game over!', 5, 25)
+    this.context2D.fillText('SpaceInvaders over!', 5, 25)
   }
 
   drawYouWin () {
@@ -155,7 +155,7 @@ export class Game {
 
   initGame () {
     // bottom middle
-    this.player = new Player(new Vector2(Game.CANVAS_WIDTH / 2,
+    this.player = new Player(new Vector2(SpaceInvaders.CANVAS_WIDTH / 2,
       this.canvas.height - this.playerOffsetHeight - Player.DEFAULT_HEIGHT))
     this.invaders = this.waveManager.getNextWave()
     this.createBases(3, new Vector2(100, 30))
@@ -175,15 +175,15 @@ export class Game {
 
   drawBackground () {
     this.context2D.fillStyle = this.spaceColor
-    this.context2D.fillRect(0, 0, Game.CANVAS_WIDTH, Game.CANVAS_HEIGHT)
+    this.context2D.fillRect(0, 0, SpaceInvaders.CANVAS_WIDTH, SpaceInvaders.CANVAS_HEIGHT)
     this.context2D.drawImage(this.background, -200, 0)
   }
 
   drawScore () {
     this.context2D.fillStyle = '#0FF'
     this.context2D.font = GameSettings.MEDIUM_FONT_SIZE + 'px Verdana'
-    this.context2D.fillText(`Score: ${Game.score}`, 2, 14)
-    this.context2D.fillText(`Health: ${this.player.health}`, 2, Game.CANVAS_HEIGHT - 6)
+    this.context2D.fillText(`Score: ${SpaceInvaders.score}`, 2, 14)
+    this.context2D.fillText(`Health: ${this.player.health}`, 2, SpaceInvaders.CANVAS_HEIGHT - 6)
 
   }
 
@@ -249,8 +249,8 @@ export class Game {
       if (item.position.x < 0) {
         outOfBoundsBy = item.position.x
         return
-      } else if (item.position.x > (Game.CANVAS_WIDTH - item.dimensions.width)) {
-        outOfBoundsBy = item.position.x - (Game.CANVAS_WIDTH - item.dimensions.width)
+      } else if (item.position.x > (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)) {
+        outOfBoundsBy = item.position.x - (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)
         return
       }
     })
@@ -351,14 +351,14 @@ export class Game {
     if (item.position.x < 0) {
       item.position.x = 0
       return
-    } else if (item.position.x > (Game.CANVAS_WIDTH - item.dimensions.width)) {
-      item.position.x = Game.CANVAS_WIDTH - item.dimensions.width
+    } else if (item.position.x > (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)) {
+      item.position.x = SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
       return
     } else if (item.position.y < 0) {
       item.position.y = 0
       return
-    } else if (item.position.y > (Game.CANVAS_HEIGHT - item.dimensions.height)) {
-      item.position.y = Game.CANVAS_HEIGHT - item.dimensions.height
+    } else if (item.position.y > (SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height)) {
+      item.position.y = SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height
       return
     }
   }
