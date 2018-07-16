@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
-  <script src="../dist/Game.b593a5bb.js"></script>
+  <script src="../dist/SpaceInvaders.js"></script>
 </head>
 <body>
 
@@ -49,7 +49,7 @@
 
 <script>
   // this is where everything starts
-  let game = new SpaceInvaders.Game(document.querySelector('#canvas'))
+  let game = new SpaceInvaders.SpaceInvaders(document.querySelector('#canvas'))
 
   // game.handleCollisions.bind(game)
   window.addEventListener('keydown', (game.onKeyDown.bind(game)))
