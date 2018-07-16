@@ -23,7 +23,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
     "start": "parcel  index.html --target=browser --out-dir build",
-    "deploy": "npm run build && git add -A && git commit -m 'build files' && git subtree push --prefix dist test gh-pages",
+    "deploy": "npm run build && git add -A && git commit -m 'build files' && git subtree push --prefix dist origin gh-pages",
     "build": "parcel build index.html --target=browser "
   },
   "repository": {
