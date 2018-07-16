@@ -24,7 +24,7 @@
     "lint": "tslint 'src/**/*.ts'",
     "start": "parcel  index.html --target=browser --out-dir build",
     "deploy": "rm -rf dist && npm run build && git add -A && git commit -m 'build files' && git subtree push --prefix dist origin gh-pages",
-    "build": "parcel build index.html --target=browser public-url=./youtube-space-invaders/"
+    "build": "parcel build index.html --target=browser --public-url=./youtube-space-invaders/"
   },
   "repository": {
     "type": "git",
