@@ -37,13 +37,14 @@ export function triangle (gameObjects: Array<IGameObject>, horizontalGap: number
       if (go.dimensions.height > maxHeight) {
         maxHeight = go.dimensions.height
       }
-      go.position = new Vector2(j * (go.dimensions.width + horizontalGap ) + nextRowOffset.x, nextRowOffset.y)
+      go.position = new Vector2(j * (go.dimensions.width + horizontalGap) + nextRowOffset.x, nextRowOffset.y)
     }
 
     nextRowOffset = nextRowOffset.addTwo(gameObjects[thisRowStartingIndex].dimensions.width + horizontalGap, maxHeight + verticalGap)
     thisRowStartingIndex = thisRowStartingIndex + numberOnThisRow
   }
 }
+
 export function rectangle (gameObjects: Array<IGameObject>, itemsPerRow, horizontalGap: number, verticalGap: number): void {
 
   let numberOfRows = gameObjects.length / itemsPerRow
@@ -62,7 +63,7 @@ export function rectangle (gameObjects: Array<IGameObject>, itemsPerRow, horizon
       if (go.dimensions.height > maxHeight) {
         maxHeight = go.dimensions.height
       }
-      go.position = new Vector2(j * (go.dimensions.width + horizontalGap ) + nextRowOffset.x, nextRowOffset.y)
+      go.position = new Vector2(j * (go.dimensions.width + horizontalGap) + nextRowOffset.x, nextRowOffset.y)
     }
 
     nextRowOffset = nextRowOffset.addTwo(0, maxHeight + verticalGap)

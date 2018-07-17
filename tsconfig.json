@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5"
+    "target": "es2015",
+    "types": [
+      "node"
+    ]
   },
-  "include": ["./src/**/*.ts"],
+  "include": [
+    "./src/**/*.ts"
+  ],
   "alwaysStrict": true,
-  "types": [
-    "node"
-  ]
-
+  "moduleResolution": "node"
 }

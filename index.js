@@ -1,8 +1,7 @@
-// this is where everything starts
+import {SpaceInvaders} from './src/SpaceInvaders'
 
-import { Game } from './Game'
-
-let game = new Game()
+  // this is where everything starts
+let game = new SpaceInvaders(document.querySelector('#canvas'))
 
 // game.handleCollisions.bind(game)
 window.addEventListener('keydown', (game.onKeyDown.bind(game)))
@@ -13,6 +12,5 @@ function gameLoop () {
   // Drawing code goes here
   game.update()
 }
-gameLoop()
 
-require('./styles/app.pcss')
+gameLoop()

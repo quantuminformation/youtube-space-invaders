@@ -1,3 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../build/spaceInvaders.js"></script>
+</head>
+<body>
+
+<style type="text/css">
+  #main-container {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0 15px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  body {
+    background-color: black;
+    color: #50d8ff;
+  }
+
+  a {
+    color: #50d8ff;
+  }
+
+</style>
+
 <div id="main-container">
   <p>You have reached the Space Invaders game!</p>
 
@@ -17,3 +46,24 @@
        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
 
+<script>
+  // this is where everything starts
+  let game = new SpaceInvaders.Game(document.getElementById('canvas'))
+
+  // game.handleCollisions.bind(game)
+  window.addEventListener('keydown', (game.onKeyDown.bind(game)))
+  window.addEventListener('keyup', (game.onKeyUp.bind(game)))
+
+  function gameLoop () {
+    requestAnimationFrame(gameLoop)
+    // Drawing code goes here
+    game.update()
+  }
+
+  gameLoop()
+
+</script>
+
+
+</body>
+</html>

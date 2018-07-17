@@ -1,32 +1,29 @@
 {
-  "name": "youtube-space-invaders",
-  "version": "1.1.0",
-  "description": "Simple setup for client-only projects",
-  "main": "webpack.config.js",
+  "name": "space-invaders",
+  "version": "0.1.0",
+  "description": "Space invaders inbuilt for your website without any iframes",
   "devDependencies": {
-    "css-loader": "^0.28.0",
-    "css-variables": "^0.1.0",
-    "html-webpack-plugin": "^2.24.1",
-    "normalize.css": "^6.0.0",
-    "postcss-calc": "^5.3.1",
-    "postcss-css-variables": "^0.7.0",
-    "postcss-custom-media": "^5.0.1",
-    "postcss-import": "^9.1.0",
-    "postcss-loader": "^1.2.2",
-    "postcss-nested": "^1.0.0",
+    "@types/node": "^10.5.2",
+    "normalize.css": "^8.0.0",
+    "parcel-bundler": "^1.9.7",
+    "parcel-plugin-typescript": "^1.0.0",
+    "postcss-calc": "^6.0.1",
+    "postcss-css-variables": "^0.9.0",
+    "postcss-custom-media": "^6.0.0",
+    "postcss-import": "^11.1.0",
+    "postcss-loader": "^2.1.6",
+    "postcss-nested": "^3.0.0",
     "pre-commit": "^1.2.2",
-    "style-loader": "^0.16.1",
-    "ts-loader": "^2.0.3",
-    "tslint": "^5.0.0",
-    "typescript": "^2.0.3",
-    "url-loader": "^0.5.7",
-    "webpack": "^2.1.0-beta.25",
-    "webpack-build-notifier": "^0.1.13"
+    "tslint": "^5.10.0",
+    "tslint-config-standard": "^7.1.0",
+    "typescript": "^2.9.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
-    "start": "webpack --watch --watch-poll"
+    "start": "parcel  index.html --target=browser --out-dir build",
+    "deploy": "rm -rf dist && npm run build && git add -A && git commit -m 'build files' && git subtree push --prefix dist origin gh-pages",
+    "build": "parcel build index.html --target=browser --public-url=/youtube-space-invaders/"
   },
   "repository": {
     "type": "git",
@@ -39,9 +36,5 @@
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
   "pre-commit": "lint",
-
-  "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
-  "dependencies": {
-    "tslint-config-standard": "^4.0.0"
-  }
+  "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme"
 }

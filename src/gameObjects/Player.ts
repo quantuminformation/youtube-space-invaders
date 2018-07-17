@@ -3,7 +3,7 @@ import { Vector2, Dimensions2, Vector2Normalised } from '../util/Vectors'
 import { Bullet, BasicBullet } from './Bullets'
 import { MEDIUM_MOVEMENT_SPEED } from '../constants/GameSettings'
 import { GAME_OVER } from '../constants/GameStates'
-import { Game } from '../Game'
+import { SpaceInvaders } from '../SpaceInvaders'
 
 export class Player implements IGameObject {
 
@@ -38,7 +38,7 @@ export class Player implements IGameObject {
   }
 
   explode () {
-    Game.gameState = GAME_OVER
+    SpaceInvaders.gameState = GAME_OVER
     let myAudio = document.createElement('audio')
 
     // todo
@@ -75,4 +75,4 @@ export class Player implements IGameObject {
 }
 
 let img = new Image()
-img.src = require('url-loader?limit=10000!../images/player.svg')
+img.src = require('../images/player.svg')

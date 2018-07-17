@@ -15,6 +15,10 @@ Latest video of the series
 " target="_blank"><img src="http://img.youtube.com/vi/bIeZNJqsKsk/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
-#Conventions
+# Conventions
 
 Angles are measured clockwise from north. For example, east is 90 degrees.
+
+# How to use in your own website
+
+I published this over npm. All you need is to give the game object a 2D Canvas object and it will be added to your website.
