@@ -2,7 +2,6 @@
   "name": "space-invaders",
   "version": "0.1.0",
   "description": "Space invaders inbuilt for your website without any iframes",
-  "main": "webpack.config.js",
   "devDependencies": {
     "@types/node": "^10.5.2",
     "normalize.css": "^8.0.0",
