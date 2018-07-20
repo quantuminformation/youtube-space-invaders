@@ -1,7 +1,7 @@
 # youtube-space-invaders
 Simple space invaders game for the browser, getting more fun each release!
 
-You can play the latest version of the game [here](https://quantuminformation.github.io/youtube-space-invaders/build/)
+You can play the latest version of the game [here](https://quantuminformation.github.io/youtube-space-invaders/)
 
 I used TypeScript as it is pretty nice for games and catches plenty bugs at compile time.
 
