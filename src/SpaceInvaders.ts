@@ -72,7 +72,7 @@ export class SpaceInvaders {
   }
 
   public setupAgent() {
-    this.interpreter = new Interpreter(this.canvas)
+    this.interpreter = new Interpreter()
   }
 
   public update() {

@@ -1,4 +1,4 @@
-import {SpaceInvaders} from './src/SpaceInvaders'
+import {SpaceInvaders} from './src/SpaceInvaders.ts'
 
   // this is where everything starts
 let game = new SpaceInvaders(document.querySelector('#game-canvas'))
