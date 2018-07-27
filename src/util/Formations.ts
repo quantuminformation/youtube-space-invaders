@@ -20,7 +20,11 @@ import { Vector2 } from './Vectors'
  *
  * @param gameObjects
  */
-export function triangle (gameObjects: Array<IGameObject>, horizontalGap: number, verticalGap: number): void {
+export function triangle(
+  gameObjects: Array<IGameObject>,
+  horizontalGap: number,
+  verticalGap: number
+): void {
   if (!isSquare(gameObjects.length)) {
     throw new Error('needs perfect square number of units')
   }
@@ -30,23 +34,33 @@ export function triangle (gameObjects: Array<IGameObject>, horizontalGap: number
   let thisRowStartingIndex = 0
 
   for (let i = numberOfRows; i >= 1; i--) {
-    let numberOnThisRow = (i * 2) - 1
+    let numberOnThisRow = i * 2 - 1
     let maxHeight: number = 0
     for (let j = 0; j < numberOnThisRow; j++) {
       let go = gameObjects[thisRowStartingIndex + j]
       if (go.dimensions.height > maxHeight) {
         maxHeight = go.dimensions.height
       }
-      go.position = new Vector2(j * (go.dimensions.width + horizontalGap) + nextRowOffset.x, nextRowOffset.y)
+      go.position = new Vector2(
+        j * (go.dimensions.width + horizontalGap) + nextRowOffset.x,
+        nextRowOffset.y
+      )
     }
 
-    nextRowOffset = nextRowOffset.addTwo(gameObjects[thisRowStartingIndex].dimensions.width + horizontalGap, maxHeight + verticalGap)
+    nextRowOffset = nextRowOffset.addTwo(
+      gameObjects[thisRowStartingIndex].dimensions.width + horizontalGap,
+      maxHeight + verticalGap
+    )
     thisRowStartingIndex = thisRowStartingIndex + numberOnThisRow
   }
 }
 
-export function rectangle (gameObjects: Array<IGameObject>, itemsPerRow, horizontalGap: number, verticalGap: number): void {
-
+export function rectangle(
+  gameObjects: Array<IGameObject>,
+  itemsPerRow,
+  horizontalGap: number,
+  verticalGap: number
+): void {
   let numberOfRows = gameObjects.length / itemsPerRow
 
   if (numberOfRows % 1 !== 0) {
@@ -63,11 +77,13 @@ export function rectangle (gameObjects: Array<IGameObject>, itemsPerRow, horizon
       if (go.dimensions.height > maxHeight) {
         maxHeight = go.dimensions.height
       }
-      go.position = new Vector2(j * (go.dimensions.width + horizontalGap) + nextRowOffset.x, nextRowOffset.y)
+      go.position = new Vector2(
+        j * (go.dimensions.width + horizontalGap) + nextRowOffset.x,
+        nextRowOffset.y
+      )
     }
 
     nextRowOffset = nextRowOffset.addTwo(0, maxHeight + verticalGap)
     thisRowStartingIndex = thisRowStartingIndex + itemsPerRow
-
   }
 }

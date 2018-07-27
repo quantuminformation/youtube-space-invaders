@@ -1,10 +1,5 @@
 import * as GameSettings from './constants/GameSettings'
-import {
-  BATTLE_MODE,
-  GAME_OVER,
-  INITIALISING,
-  YOU_WIN
-} from './constants/GameStates'
+import { BATTLE_MODE, GAME_OVER, INITIALISING, YOU_WIN } from './constants/GameStates'
 import { KEY_CODES } from './constants/KeyCodes'
 import { AbstractInvader } from './gameObjects/AbstractInvader'
 import { Bullet } from './gameObjects/Bullets'
@@ -21,8 +16,7 @@ import { Interpreter } from './agent/Interpreter'
 export class SpaceInvaders {
   public static ASPECT_RATIO: number = 1 // keep it square for now
   public static CANVAS_WIDTH: number = 600
-  public static CANVAS_HEIGHT: number =
-    SpaceInvaders.CANVAS_WIDTH / SpaceInvaders.ASPECT_RATIO
+  public static CANVAS_HEIGHT: number = SpaceInvaders.CANVAS_WIDTH / SpaceInvaders.ASPECT_RATIO
 
   static gameState = INITIALISING
   static score: number = 0
@@ -80,8 +74,7 @@ export class SpaceInvaders {
     const elapsedTime: number = start - this.lastFrame
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
-    const elapsedReduced: number =
-      (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
+    const elapsedReduced: number = (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
 
     this.drawBackground()
 
@@ -140,9 +133,7 @@ export class SpaceInvaders {
       this.bases.push(new PlayerBase(containedWithinDimensions))
     }
     const freeSpace =
-      SpaceInvaders.CANVAS_WIDTH -
-      edgeSpace * 2 -
-      noOfBases * this.bases[0].actualDimensions.x
+      SpaceInvaders.CANVAS_WIDTH - edgeSpace * 2 - noOfBases * this.bases[0].actualDimensions.x
     const spaceBetween = freeSpace / (noOfBases - 1)
     // assume that all bases are same size
     for (let i = 0; i < noOfBases; i++) {
@@ -197,8 +188,8 @@ export class SpaceInvaders {
    * Remove scenery that has been hit
    */
   public updateBases() {
-    this.bases.forEach((base: PlayerBase)=> {
-      base.allDestructibleScenery = base.allDestructibleScenery.filter(( particle )=> {
+    this.bases.forEach((base: PlayerBase) => {
+      base.allDestructibleScenery = base.allDestructibleScenery.filter(particle => {
         return particle.active
       })
     })
@@ -206,12 +197,7 @@ export class SpaceInvaders {
 
   public drawBackground() {
     this.context2D.fillStyle = this.spaceColor
-    this.context2D.fillRect(
-      0,
-      0,
-      SpaceInvaders.CANVAS_WIDTH,
-      SpaceInvaders.CANVAS_HEIGHT
-    )
+    this.context2D.fillRect(0, 0, SpaceInvaders.CANVAS_WIDTH, SpaceInvaders.CANVAS_HEIGHT)
     this.context2D.drawImage(this.background, -200, 0)
   }
 
@@ -219,56 +205,43 @@ export class SpaceInvaders {
     this.context2D.fillStyle = '#0FF'
     this.context2D.font = GameSettings.MEDIUM_FONT_SIZE + 'px Verdana'
     this.context2D.fillText(`Score: ${SpaceInvaders.score}`, 2, 14)
-    this.context2D.fillText(
-      `Health: ${this.player.health}`,
-      2,
-      SpaceInvaders.CANVAS_HEIGHT - 6
-    )
+    this.context2D.fillText(`Health: ${this.player.health}`, 2, SpaceInvaders.CANVAS_HEIGHT - 6)
   }
 
   public drawBattleScene() {
     this.drawScore()
 
-    this.invaders.forEach((thing: AbstractInvader) =>{
+    this.invaders.forEach((thing: AbstractInvader) => {
       thing.draw(this.context2D)
     })
-    this.playerBullets.forEach((thing: Bullet) =>{
+    this.playerBullets.forEach((thing: Bullet) => {
       thing.draw(this.context2D)
     })
-    this.invaderBullets.forEach((thing: Bullet)=> {
+    this.invaderBullets.forEach((thing: Bullet) => {
       thing.draw(this.context2D)
     })
-    this.bases.forEach((thing: PlayerBase)=> {
+    this.bases.forEach((thing: PlayerBase) => {
       thing.draw(this.context2D)
     })
     this.player.draw(this.context2D)
 
     this.interpreter.readPixels()
-
   }
 
   public updatePlayer(elapsedTime: number) {
     if (this.keyStatus[KEY_CODES.LEFT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
-        this.player.updateDirection(
-          new Vector2Normalised(degreesToRadians(305))
-        )
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)))
       } else if (this.keyStatus[KEY_CODES.DOWN]) {
-        this.player.updateDirection(
-          new Vector2Normalised(degreesToRadians(225))
-        )
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(225)))
       } else {
-        this.player.updateDirection(
-          new Vector2Normalised(degreesToRadians(270))
-        )
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(270)))
       }
     } else if (this.keyStatus[KEY_CODES.RIGHT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
         this.player.updateDirection(new Vector2Normalised(degreesToRadians(45)))
       } else if (this.keyStatus[KEY_CODES.DOWN]) {
-        this.player.updateDirection(
-          new Vector2Normalised(degreesToRadians(135))
-        )
+        this.player.updateDirection(new Vector2Normalised(degreesToRadians(135)))
       } else {
         this.player.updateDirection(new Vector2Normalised(degreesToRadians(90)))
       }
@@ -297,12 +270,8 @@ export class SpaceInvaders {
       if (item.position.x < 0) {
         outOfBoundsBy = item.position.x
         return
-      } else if (
-        item.position.x >
-        SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
-      ) {
-        outOfBoundsBy =
-          item.position.x - (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)
+      } else if (item.position.x > SpaceInvaders.CANVAS_WIDTH - item.dimensions.width) {
+        outOfBoundsBy = item.position.x - (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)
         return
       }
     })
@@ -311,7 +280,7 @@ export class SpaceInvaders {
       return
     }
 
-    this.invaders.forEach((enemy: AbstractInvader) =>{
+    this.invaders.forEach((enemy: AbstractInvader) => {
       // moving to the right
       enemy.position.x -= outOfBoundsBy
       enemy.reverse()
@@ -320,18 +289,17 @@ export class SpaceInvaders {
   }
 
   public updateEnemies(elapsedUnit: number) {
-
-    this.invaders = this.invaders.filter((enemy) =>{
+    this.invaders = this.invaders.filter(enemy => {
       return enemy.active
     })
 
-    this.invaders.forEach((enemy: AbstractInvader) =>{
+    this.invaders.forEach((enemy: AbstractInvader) => {
       enemy.update(elapsedUnit) // this might move things out of bounds so check next
       //  self.clamp(enemy)
     })
 
     this.ReverseEnemyDirectionIfOutOfBoundsAndDropDown()
-    this.invaders.forEach((invader: AbstractInvader) =>{
+    this.invaders.forEach((invader: AbstractInvader) => {
       if (Math.random() < invader.probabilityOfShooting) {
         this.invaderBullets = this.invaderBullets.concat(invader.shootAhead())
       }
@@ -339,31 +307,31 @@ export class SpaceInvaders {
   }
 
   public updateBullets(elapsedUnit: number) {
-    this.playerBullets = this.playerBullets.filter((bullet) => {
+    this.playerBullets = this.playerBullets.filter(bullet => {
       return bullet.active
     })
-    this.playerBullets.forEach((bullet: Bullet) =>{
+    this.playerBullets.forEach((bullet: Bullet) => {
       bullet.update(elapsedUnit)
     })
 
-    this.invaderBullets = this.invaderBullets.filter((bullet)=> {
+    this.invaderBullets = this.invaderBullets.filter(bullet => {
       return bullet.active
     })
-    this.invaderBullets.forEach((bullet: Bullet) =>{
+    this.invaderBullets.forEach((bullet: Bullet) => {
       bullet.update(elapsedUnit)
     })
   }
 
   public handleCollisions() {
-    this.playerBullets.forEach((bullet: Bullet) =>{
-      this.invaders.forEach((invader: AbstractInvader) =>{
+    this.playerBullets.forEach((bullet: Bullet) => {
+      this.invaders.forEach((invader: AbstractInvader) => {
         if (rectCollides(bullet, invader)) {
           invader.takeHit(bullet)
           bullet.active = false
         }
       })
-      this.bases.forEach((base: PlayerBase) =>{
-        base.allDestructibleScenery.forEach(( particle: DestructibleScenery )=> {
+      this.bases.forEach((base: PlayerBase) => {
+        base.allDestructibleScenery.forEach((particle: DestructibleScenery) => {
           if (rectCollides(bullet, particle)) {
             particle.explode()
             bullet.active = false
@@ -372,14 +340,14 @@ export class SpaceInvaders {
       })
     })
 
-    this.invaderBullets.forEach((bullet: Bullet)=> {
+    this.invaderBullets.forEach((bullet: Bullet) => {
       if (rectCollides(bullet, this.player)) {
         this.player.takeDamage(bullet)
         const positionCopy = JSON.parse(JSON.stringify(this.player.position))
         bullet.active = false
       }
-      this.bases.forEach((base: PlayerBase) =>{
-        base.allDestructibleScenery.forEach(( particle: DestructibleScenery )=> {
+      this.bases.forEach((base: PlayerBase) => {
+        base.allDestructibleScenery.forEach((particle: DestructibleScenery) => {
           if (rectCollides(bullet, particle)) {
             particle.explode()
             bullet.active = false
@@ -397,19 +365,13 @@ export class SpaceInvaders {
     if (item.position.x < 0) {
       item.position.x = 0
       return
-    } else if (
-      item.position.x >
-      SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
-    ) {
+    } else if (item.position.x > SpaceInvaders.CANVAS_WIDTH - item.dimensions.width) {
       item.position.x = SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
       return
     } else if (item.position.y < 0) {
       item.position.y = 0
       return
-    } else if (
-      item.position.y >
-      SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height
-    ) {
+    } else if (item.position.y > SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height) {
       item.position.y = SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height
       return
     }
