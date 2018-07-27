@@ -19,6 +19,7 @@ export class DestructibleScenery implements IGameObject {
       canvas.fillRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height)
     }
   }
+
 // tslint:disable-next-line
   update (elapsedUnit) {
   }
@@ -60,8 +61,7 @@ export class PlayerBase {
   }
 
   draw (canvas: CanvasRenderingContext2D) {
-    let self = this
-    self.allDestructibleScenery.forEach(function (item: DestructibleScenery) {
+    this.allDestructibleScenery.forEach((item: DestructibleScenery) => {
       item.draw(canvas)
     })
   }

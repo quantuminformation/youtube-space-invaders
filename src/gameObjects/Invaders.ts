@@ -38,7 +38,7 @@ export class HeavyInvader extends AbstractInvader {
     this.image.src = require('../images/HeavyInvader.svg')
   }
 
-  shootAhead (): Array<Bullet> {
+  public shootAhead (): Array<Bullet> {
     // todo Sound.play('shoot')
 
     let self = this

@@ -1,48 +1,58 @@
-import { Player } from './gameObjects/Player'
-import { Vector2, Vector2Normalised } from './util/Vectors'
-import { KEY_CODES } from './constants/Keycodes'
 import * as GameSettings from './constants/GameSettings'
-import { GAME_OVER, INITIALISING, BATTLE_MODE, YOU_WIN } from './constants/GameStates'
+import {
+  BATTLE_MODE,
+  GAME_OVER,
+  INITIALISING,
+  YOU_WIN
+} from './constants/GameStates'
+import { KEY_CODES } from './constants/KeyCodes'
+import { AbstractInvader } from './gameObjects/AbstractInvader'
 import { Bullet } from './gameObjects/Bullets'
+import { IGameObject } from './gameObjects/IGameObject'
+import { Player } from './gameObjects/Player'
+import { DestructibleScenery, PlayerBase } from './gameObjects/PlayerBase'
 import { WaveManager } from './story/WaveManager'
 import { rectCollides } from './util/CollisionDetection'
-import { IGameObject } from './gameObjects/IGameObject'
-import { AbstractInvader } from './gameObjects/AbstractInvader'
 import { degreesToRadians } from './util/Conversions'
-import { PlayerBase, DestructibleScenery } from './gameObjects/PlayerBase'
+import { Vector2, Vector2Normalised } from './util/Vectors'
+
+import { Interpreter } from './agent/Interpreter'
 
 export class SpaceInvaders {
-  static ASPECT_RATIO: number = 1 // keep it square for now
-  static CANVAS_WIDTH: number = 600
-  static CANVAS_HEIGHT: number = SpaceInvaders.CANVAS_WIDTH / SpaceInvaders.ASPECT_RATIO
+  public static ASPECT_RATIO: number = 1 // keep it square for now
+  public static CANVAS_WIDTH: number = 600
+  public static CANVAS_HEIGHT: number =
+    SpaceInvaders.CANVAS_WIDTH / SpaceInvaders.ASPECT_RATIO
 
   static gameState = INITIALISING
   static score: number = 0
 
-  waveManager = new WaveManager()
-  player: Player
-  playerOffsetHeight: number = 20
-  playerBullets: Bullet[] = []
-  bases: PlayerBase[] = []
+  public interpreter: Interpreter
 
-  invaders: AbstractInvader[]
-  invaderBullets: Bullet[] = []
+  private waveManager = new WaveManager()
+  private player: Player
+  private playerOffsetHeight: number = 20
+  private playerBullets: Bullet[] = []
+  private bases: PlayerBase[] = []
 
-  canvas: HTMLCanvasElement
+  private invaders: AbstractInvader[]
+  private invaderBullets: Bullet[] = []
 
-  context2D: CanvasRenderingContext2D
-  background = new Image()
+  private canvas: HTMLCanvasElement
 
-  spaceColor: string = 'black'
+  private context2D: CanvasRenderingContext2D
+  private background = new Image()
 
-  keyStatus = {}
+  private spaceColor: string = 'black'
 
-  lastFrame: number = new Date().getTime()
+  private keyStatus = {}
+
+  private lastFrame: number = new Date().getTime()
 
   /**
    * Basically we figure out the best width for our canvas at start up.
    */
-  constructor (hostElement: HTMLCanvasElement) {
+  constructor(hostElement: HTMLCanvasElement) {
     this.canvas = hostElement
     new Date().getTime()
     this.context2D = this.canvas.getContext('2d')
@@ -51,19 +61,27 @@ export class SpaceInvaders {
     this.background.src = require('./images/backgrounds/sunrise.jpg')
 
     // all keys are down to start
-    for (let code in KEY_CODES) {
-      this.keyStatus[KEY_CODES[code]] = false
+    for (const code in KEY_CODES) {
+      if (KEY_CODES.hasOwnProperty(code)) {
+        this.keyStatus[KEY_CODES[code]] = false
+      }
     }
 
     this.initGame()
+    this.setupAgent()
   }
 
-  update () {
-    let start = new Date().getTime()
-    let elapsedTime: number = start - this.lastFrame
+  public setupAgent() {
+    this.interpreter = new Interpreter(this.canvas)
+  }
+
+  public update() {
+    const start = new Date().getTime()
+    const elapsedTime: number = start - this.lastFrame
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
-    let elapsedReduced: number = (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
+    const elapsedReduced: number =
+      (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
 
     this.drawBackground()
 
@@ -112,51 +130,65 @@ export class SpaceInvaders {
    * |                                        |
    *
    */
-  createBases (noOfBases: number, containedWithinDimensions: Vector2, edgeSpace: number = 40) {
-    let bases: PlayerBase[] = []// clear old one if there
+  public createBases(
+    noOfBases: number,
+    containedWithinDimensions: Vector2,
+    edgeSpace: number = 40
+  ) {
+    const bases: PlayerBase[] = [] // clear old one if there
     for (let i = 0; i < noOfBases; i++) {
       this.bases.push(new PlayerBase(containedWithinDimensions))
     }
-    let freeSpace = SpaceInvaders.CANVAS_WIDTH - edgeSpace * 2 - noOfBases * this.bases[0].actualDimensions.x
-    let spaceBetween = freeSpace / (noOfBases - 1)
+    const freeSpace =
+      SpaceInvaders.CANVAS_WIDTH -
+      edgeSpace * 2 -
+      noOfBases * this.bases[0].actualDimensions.x
+    const spaceBetween = freeSpace / (noOfBases - 1)
     // assume that all bases are same size
     for (let i = 0; i < noOfBases; i++) {
-      let nextPos: Vector2 = new Vector2(i * (this.bases[0].actualDimensions.x + spaceBetween) + edgeSpace, 500)
+      const nextPos: Vector2 = new Vector2(
+        i * (this.bases[0].actualDimensions.x + spaceBetween) + edgeSpace,
+        500
+      )
       this.bases[i].transform(nextPos)
     }
   }
 
-  drawInit () {
+  public drawInit() {
     this.context2D.fillStyle = '#0FF'
     this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('Loading..', 5, 25)
     SpaceInvaders.gameState = BATTLE_MODE
   }
 
-  drawGameOver () {
+  public drawGameOver() {
     this.context2D.fillStyle = '#F00'
     this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('SpaceInvaders over!', 5, 25)
   }
 
-  drawYouWin () {
+  public drawYouWin() {
     this.context2D.fillStyle = '#FF0'
     this.context2D.font = GameSettings.LARGE_FONT_SIZE + 'px Verdana'
     this.context2D.fillText('YOU win!', 5, 25)
   }
 
-  onKeyDown (evt) {
+  public onKeyDown(evt) {
     this.keyStatus[evt.keyCode] = true
   }
 
-  onKeyUp (evt) {
+  public onKeyUp(evt) {
     this.keyStatus[evt.keyCode] = false
   }
 
-  initGame () {
+  public initGame() {
     // bottom middle
-    this.player = new Player(new Vector2(SpaceInvaders.CANVAS_WIDTH / 2,
-      this.canvas.height - this.playerOffsetHeight - Player.DEFAULT_HEIGHT))
+    this.player = new Player(
+      new Vector2(
+        SpaceInvaders.CANVAS_WIDTH / 2,
+        this.canvas.height - this.playerOffsetHeight - Player.DEFAULT_HEIGHT
+      )
+    )
     this.invaders = this.waveManager.getNextWave()
     this.createBases(3, new Vector2(100, 30))
   }
@@ -164,66 +196,82 @@ export class SpaceInvaders {
   /**
    * Remove scenery that has been hit
    */
-  updateBases () {
-    let self = this
-    self.bases.forEach(function (base: PlayerBase) {
-      base.allDestructibleScenery = base.allDestructibleScenery.filter(function (particle) {
+  public updateBases() {
+    this.bases.forEach((base: PlayerBase)=> {
+      base.allDestructibleScenery = base.allDestructibleScenery.filter(( particle )=> {
         return particle.active
       })
     })
   }
 
-  drawBackground () {
+  public drawBackground() {
     this.context2D.fillStyle = this.spaceColor
-    this.context2D.fillRect(0, 0, SpaceInvaders.CANVAS_WIDTH, SpaceInvaders.CANVAS_HEIGHT)
+    this.context2D.fillRect(
+      0,
+      0,
+      SpaceInvaders.CANVAS_WIDTH,
+      SpaceInvaders.CANVAS_HEIGHT
+    )
     this.context2D.drawImage(this.background, -200, 0)
   }
 
-  drawScore () {
+  public drawScore() {
     this.context2D.fillStyle = '#0FF'
     this.context2D.font = GameSettings.MEDIUM_FONT_SIZE + 'px Verdana'
     this.context2D.fillText(`Score: ${SpaceInvaders.score}`, 2, 14)
-    this.context2D.fillText(`Health: ${this.player.health}`, 2, SpaceInvaders.CANVAS_HEIGHT - 6)
-
+    this.context2D.fillText(
+      `Health: ${this.player.health}`,
+      2,
+      SpaceInvaders.CANVAS_HEIGHT - 6
+    )
   }
 
-  drawBattleScene () {
+  public drawBattleScene() {
     this.drawScore()
 
-    let self = this
-    this.invaders.forEach(function (thing: AbstractInvader) {
-      thing.draw(self.context2D)
+    this.invaders.forEach((thing: AbstractInvader) =>{
+      thing.draw(this.context2D)
     })
-    this.playerBullets.forEach(function (thing: Bullet) {
-      thing.draw(self.context2D)
+    this.playerBullets.forEach((thing: Bullet) =>{
+      thing.draw(this.context2D)
     })
-    this.invaderBullets.forEach(function (thing: Bullet) {
-      thing.draw(self.context2D)
+    this.invaderBullets.forEach((thing: Bullet)=> {
+      thing.draw(this.context2D)
     })
-    this.bases.forEach(function (thing: PlayerBase) {
-      thing.draw(self.context2D)
+    this.bases.forEach((thing: PlayerBase)=> {
+      thing.draw(this.context2D)
     })
     this.player.draw(this.context2D)
+
+    this.interpreter.readPixels()
+
   }
 
-  updatePlayer (elapsedTime: number) {
+  public updatePlayer(elapsedTime: number) {
     if (this.keyStatus[KEY_CODES.LEFT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
-        this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)))
+        this.player.updateDirection(
+          new Vector2Normalised(degreesToRadians(305))
+        )
       } else if (this.keyStatus[KEY_CODES.DOWN]) {
-        this.player.updateDirection(new Vector2Normalised(degreesToRadians(225)))
+        this.player.updateDirection(
+          new Vector2Normalised(degreesToRadians(225))
+        )
       } else {
-        this.player.updateDirection(new Vector2Normalised(degreesToRadians(270)))
+        this.player.updateDirection(
+          new Vector2Normalised(degreesToRadians(270))
+        )
       }
     } else if (this.keyStatus[KEY_CODES.RIGHT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
         this.player.updateDirection(new Vector2Normalised(degreesToRadians(45)))
       } else if (this.keyStatus[KEY_CODES.DOWN]) {
-        this.player.updateDirection(new Vector2Normalised(degreesToRadians(135)))
+        this.player.updateDirection(
+          new Vector2Normalised(degreesToRadians(135))
+        )
       } else {
         this.player.updateDirection(new Vector2Normalised(degreesToRadians(90)))
       }
-
     } else if (this.keyStatus[KEY_CODES.UP]) {
       this.player.updateDirection(new Vector2Normalised(degreesToRadians(0)))
     } else if (this.keyStatus[KEY_CODES.DOWN]) {
@@ -233,7 +281,7 @@ export class SpaceInvaders {
     }
 
     if (this.keyStatus[KEY_CODES.SPACE]) {
-      let bullet = this.player.shootAhead()
+      const bullet = this.player.shootAhead()
       if (bullet) {
         this.playerBullets.push(bullet)
       }
@@ -243,14 +291,18 @@ export class SpaceInvaders {
     this.clamp(this.player)
   }
 
-  ReverseEnemyDirectionIfOutOfBoundsAndDropDown (): void {
+  public ReverseEnemyDirectionIfOutOfBoundsAndDropDown(): void {
     let outOfBoundsBy = 0
     this.invaders.forEach(item => {
       if (item.position.x < 0) {
         outOfBoundsBy = item.position.x
         return
-      } else if (item.position.x > (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)) {
-        outOfBoundsBy = item.position.x - (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)
+      } else if (
+        item.position.x >
+        SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
+      ) {
+        outOfBoundsBy =
+          item.position.x - (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)
         return
       }
     })
@@ -259,7 +311,7 @@ export class SpaceInvaders {
       return
     }
 
-    this.invaders.forEach(function (enemy: AbstractInvader) {
+    this.invaders.forEach((enemy: AbstractInvader) =>{
       // moving to the right
       enemy.position.x -= outOfBoundsBy
       enemy.reverse()
@@ -267,73 +319,67 @@ export class SpaceInvaders {
     })
   }
 
-  updateEnemies (elapsedUnit: number) {
-    let self = this
+  public updateEnemies(elapsedUnit: number) {
 
-    self.invaders = self.invaders.filter(function (enemy) {
+    this.invaders = this.invaders.filter((enemy) =>{
       return enemy.active
     })
 
-    self.invaders.forEach(function (enemy: AbstractInvader) {
-      enemy.update(elapsedUnit)// this might move things out of bounds so check next
+    this.invaders.forEach((enemy: AbstractInvader) =>{
+      enemy.update(elapsedUnit) // this might move things out of bounds so check next
       //  self.clamp(enemy)
     })
 
-    self.ReverseEnemyDirectionIfOutOfBoundsAndDropDown()
-    self.invaders.forEach(function (invader: AbstractInvader) {
-
+    this.ReverseEnemyDirectionIfOutOfBoundsAndDropDown()
+    this.invaders.forEach((invader: AbstractInvader) =>{
       if (Math.random() < invader.probabilityOfShooting) {
-        self.invaderBullets = self.invaderBullets.concat(invader.shootAhead())
+        this.invaderBullets = this.invaderBullets.concat(invader.shootAhead())
       }
     })
   }
 
-  updateBullets (elapsedUnit: number) {
-    this.playerBullets = this.playerBullets.filter(function (bullet) {
+  public updateBullets(elapsedUnit: number) {
+    this.playerBullets = this.playerBullets.filter((bullet) => {
       return bullet.active
     })
-    this.playerBullets.forEach(function (bullet: Bullet) {
+    this.playerBullets.forEach((bullet: Bullet) =>{
       bullet.update(elapsedUnit)
     })
 
-    this.invaderBullets = this.invaderBullets.filter(function (bullet) {
+    this.invaderBullets = this.invaderBullets.filter((bullet)=> {
       return bullet.active
     })
-    this.invaderBullets.forEach(function (bullet: Bullet) {
+    this.invaderBullets.forEach((bullet: Bullet) =>{
       bullet.update(elapsedUnit)
     })
-
   }
 
-  handleCollisions () {
-    let self = this
-    self.playerBullets.forEach(function (bullet: Bullet) {
-      self.invaders.forEach(function (invader: AbstractInvader) {
+  public handleCollisions() {
+    this.playerBullets.forEach((bullet: Bullet) =>{
+      this.invaders.forEach((invader: AbstractInvader) =>{
         if (rectCollides(bullet, invader)) {
           invader.takeHit(bullet)
           bullet.active = false
         }
       })
-      self.bases.forEach(function (base: PlayerBase) {
-
-        base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
+      this.bases.forEach((base: PlayerBase) =>{
+        base.allDestructibleScenery.forEach(( particle: DestructibleScenery )=> {
           if (rectCollides(bullet, particle)) {
             particle.explode()
             bullet.active = false
           }
         })
       })
-    }
-    )
+    })
 
-    self.invaderBullets.forEach(function (bullet: Bullet) {
-      if (rectCollides(bullet, self.player)) {
-        self.player.takeDamage(bullet)
-        let postionCopy = JSON.parse(JSON.stringify(self.player.position))
+    this.invaderBullets.forEach((bullet: Bullet)=> {
+      if (rectCollides(bullet, this.player)) {
+        this.player.takeDamage(bullet)
+        const positionCopy = JSON.parse(JSON.stringify(this.player.position))
         bullet.active = false
       }
-      self.bases.forEach(function (base: PlayerBase) {
-        base.allDestructibleScenery.forEach(function (particle: DestructibleScenery) {
+      this.bases.forEach((base: PlayerBase) =>{
+        base.allDestructibleScenery.forEach(( particle: DestructibleScenery )=> {
           if (rectCollides(bullet, particle)) {
             particle.explode()
             bullet.active = false
@@ -343,21 +389,27 @@ export class SpaceInvaders {
     })
   }
 
-  gameOver () {
+  public gameOver() {
     alert('you lose!')
   }
 
-  clamp (item: IGameObject) {
+  public clamp(item: IGameObject) {
     if (item.position.x < 0) {
       item.position.x = 0
       return
-    } else if (item.position.x > (SpaceInvaders.CANVAS_WIDTH - item.dimensions.width)) {
+    } else if (
+      item.position.x >
+      SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
+    ) {
       item.position.x = SpaceInvaders.CANVAS_WIDTH - item.dimensions.width
       return
     } else if (item.position.y < 0) {
       item.position.y = 0
       return
-    } else if (item.position.y > (SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height)) {
+    } else if (
+      item.position.y >
+      SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height
+    ) {
       item.position.y = SpaceInvaders.CANVAS_HEIGHT - item.dimensions.height
       return
     }

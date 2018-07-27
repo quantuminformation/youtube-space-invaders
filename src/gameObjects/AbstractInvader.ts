@@ -54,7 +54,7 @@ export abstract class AbstractInvader implements IGameObject {
     this.position.x += this.directionVector.x * elapsedUnit * GameSettings.VERY_SLOW_MOVEMENT_SPEED
   }
 
-  shootAhead (): Array<Bullet> {
+  public shootAhead (): Array<Bullet> {
     // todo Sound.play('shoot')
     return [new BasicBullet(this.midpoint(), new Vector2(0, 1))]
   }
