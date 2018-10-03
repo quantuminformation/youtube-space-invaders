@@ -13,6 +13,14 @@ import { Vector2, Vector2Normalised } from './util/Vectors'
 
 import { Interpreter } from './agent/Interpreter'
 
+export enum Actions {
+  MOVE_UP,
+  MOVE_RIGHT,
+  MOVE_DOWN,
+  MOVE_LEFT,
+  SHOOT
+}
+
 export class SpaceInvaders {
   public static ASPECT_RATIO: number = 1 // keep it square for now
   public static CANVAS_WIDTH: number = 600
@@ -40,13 +48,14 @@ export class SpaceInvaders {
   private spaceColor: string = 'black'
 
   private keyStatus = {}
+  private keyStatusOnce = {} //only runs 1 frame
 
   private lastFrame: number = new Date().getTime()
 
   /**
    * Basically we figure out the best width for our canvas at start up.
    */
-  constructor(hostElement: HTMLCanvasElement) {
+  constructor(hostElement: HTMLCanvasElement, private isAgentMode = false) {
     this.canvas = hostElement
     new Date().getTime()
     this.context2D = this.canvas.getContext('2d')
@@ -63,10 +72,18 @@ export class SpaceInvaders {
 
     this.initGame()
     this.setupAgent()
+    this.addExternalEvents()
   }
 
   public setupAgent() {
     this.interpreter = new Interpreter()
+  }
+
+  private addExternalEvents() {
+    //document.body.addEventListener(Actions.MOVE_LEFT as st , ()=>{
+    document.body.addEventListener('left', () => {
+      this.keyStatusOnce['left'] = true
+    })
   }
 
   public update() {
@@ -172,6 +189,10 @@ export class SpaceInvaders {
     this.keyStatus[evt.keyCode] = false
   }
 
+  public onAction(action: string) {
+    // this.keyStatus[evt.keyCode] = false
+  }
+
   public initGame() {
     // bottom middle
     this.player = new Player(
@@ -198,7 +219,6 @@ export class SpaceInvaders {
   public drawBackground() {
     this.context2D.fillStyle = this.spaceColor
     this.context2D.fillRect(0, 0, SpaceInvaders.CANVAS_WIDTH, SpaceInvaders.CANVAS_HEIGHT)
-    this.context2D.drawImage(this.background, -200, 0)
   }
 
   public drawScore() {
@@ -228,6 +248,11 @@ export class SpaceInvaders {
     this.interpreter.readPixels()
   }
 
+  /**
+   * Both manual mode and agent mode
+   * In manual mode the app listens to keyboard presses and agent mode to actions via dom events (see index.ts)
+   * @param elapsedTime
+   */
   public updatePlayer(elapsedTime: number) {
     if (this.keyStatus[KEY_CODES.LEFT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
@@ -258,6 +283,14 @@ export class SpaceInvaders {
       if (bullet) {
         this.playerBullets.push(bullet)
       }
+    }
+
+    if (this.isAgentMode) {
+      // reset states
+      this.keyStatus[KEY_CODES.LEFT] = false
+      this.keyStatus[KEY_CODES.RIGHT] = false
+      this.keyStatus[KEY_CODES.UP] = false
+      this.keyStatus[KEY_CODES.DOWN] = false
     }
 
     this.player.update(elapsedTime)

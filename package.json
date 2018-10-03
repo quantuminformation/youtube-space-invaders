@@ -14,7 +14,6 @@
     "postcss-import": "^11.1.0",
     "postcss-loader": "^2.1.6",
     "postcss-nested": "^3.0.0",
-    "pre-commit": "^1.2.2",
     "prettier": "^1.13.7",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.14.0",
@@ -25,7 +24,7 @@
     "lint": "tslint 'src/**/*.ts'",
     "fix": "tslint --fix src/SpaceInvaders.ts ",
     "start": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
-    "deploy": "rm -rf dist && npm run build && git add --force dist && git add -A && git commit -m 'build files' && git subtree push --prefix dist origin gh-pages",
+    "deploy": "rm -rf dist && npm run build && git add --force dist && git add -A && git commit -m 'build files' && git push origin `git subtree split --prefix dist master`:gh-pages --force",
     "build": "parcel build index.html --target=browser --public-url=/youtube-space-invaders/"
   },
   "repository": {
@@ -38,7 +37,6 @@
   "bugs": {
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
-  "pre-commit": "",
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {}
 }
