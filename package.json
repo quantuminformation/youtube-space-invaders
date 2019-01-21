@@ -8,16 +8,16 @@
     "normalize.css": "^8.0.0",
     "parcel-bundler": "^1.9.7",
     "parcel-plugin-typescript": "^1.0.0",
-    "postcss-calc": "^6.0.1",
-    "postcss-css-variables": "^0.9.0",
-    "postcss-custom-media": "^6.0.0",
-    "postcss-import": "^11.1.0",
-    "postcss-loader": "^2.1.6",
-    "postcss-nested": "^3.0.0",
+    "postcss-calc": "^7.0.1",
+    "postcss-css-variables": "^0.11.0",
+    "postcss-custom-media": "^7.0.7",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.1.1",
     "prettier": "^1.13.7",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.14.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.2.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
