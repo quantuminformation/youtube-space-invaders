@@ -2,30 +2,36 @@
   "name": "space-invaders",
   "version": "0.1.0",
   "description": "Space invaders inbuilt for your website without any iframes",
+  "main": "webpack.config.js",
   "devDependencies": {
-    "@types/node": "^10.5.3",
-    "cross-env": "^5.2.0",
+    "@types/node": "^10.1.2",
+    "awesome-typescript-loader": "^5.0.0",
+    "css-loader": "^2.1.0",
+    "css-variables": "^0.1.0",
+    "file-loader": "^3.0.1",
+    "html-webpack-plugin": "^3.2.0",
     "normalize.css": "^8.0.0",
-    "parcel-bundler": "^1.9.7",
-    "parcel-plugin-typescript": "^1.0.0",
     "postcss-calc": "^7.0.1",
     "postcss-css-variables": "^0.11.0",
     "postcss-custom-media": "^7.0.7",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-nested": "^4.1.1",
-    "prettier": "^1.13.7",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.14.0",
-    "typescript": "^3.2.4"
+    "pre-commit": "^1.2.2",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.10.0",
+    "typescript": "^3.2.4",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.8.3",
+    "webpack-build-notifier": "^0.1.25",
+    "webpack-cli": "^3.0.8"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
-    "fix": "tslint --fix src/SpaceInvaders.ts ",
-    "start": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
-    "deploy": "rm -rf dist && npm run build && git add --force dist && git add -A && git commit -m 'build files' && git push origin `git subtree split --prefix dist master`:gh-pages --force",
-    "build": "parcel build index.html --target=browser --public-url=/youtube-space-invaders/"
+    "start": "webpack --watch",
+    "build": "webpack "
   },
   "repository": {
     "type": "git",
@@ -37,6 +43,9 @@
   "bugs": {
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
+  "pre-commit": "lint",
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
-  "dependencies": {}
+  "dependencies": {
+    "tslint-config-standard": "^8.0.1"
+  }
 }
