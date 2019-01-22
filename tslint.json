@@ -1,6 +1,11 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-prettier"
-  ]
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rules": {
+    "no-console": false,
+    "no-var-requires": false,
+    "object-literal-sort-keys": false,
+    "object-literal-shorthand": false,
+    "js-no-bind": false,
+    "jsx-no-lambada": false
+  }
 }

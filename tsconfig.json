@@ -3,7 +3,7 @@
     "target": "es2015",
     "types": [
       "node"
-    ],
+    ]
   },
   "include": [
     "./src/**/*.ts"
