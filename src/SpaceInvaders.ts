@@ -11,6 +11,8 @@ import { rectCollides } from './util/CollisionDetection'
 import { degreesToRadians } from './util/Conversions'
 import { Vector2, Vector2Normalised } from './util/Vectors'
 
+import sunrise from './images/backgrounds/sunrise.jpg'
+
 import { Interpreter } from './agent/Interpreter'
 
 export enum Actions {
@@ -61,7 +63,7 @@ export class SpaceInvaders {
     this.context2D = this.canvas.getContext('2d')
     this.canvas.width = SpaceInvaders.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / SpaceInvaders.ASPECT_RATIO
-    this.background.src = require('./images/backgrounds/sunrise.jpg')
+    this.background.src = sunrise
 
     // all keys are down to start
     for (const code in KEY_CODES) {
