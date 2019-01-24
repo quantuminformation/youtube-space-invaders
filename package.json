@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "Space invaders inbuilt for your website without any iframes",
   "devDependencies": {
-    "@types/node": "^10.5.3",
+    "@types/node": "^10.12.18",
     "cross-env": "^5.2.0",
-    "normalize.css": "^8.0.0",
-    "parcel-bundler": "^1.9.7",
+    "normalize.css": "^8.0.1",
+    "parcel-bundler": "^1.11.0",
     "parcel-plugin-typescript": "^1.0.0",
     "postcss-calc": "^7.0.1",
     "postcss-css-variables": "^0.11.0",
@@ -14,9 +14,9 @@
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-nested": "^4.1.1",
-    "prettier": "^1.13.7",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.14.0",
+    "prettier": "^1.16.1",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.4"
   },
   "scripts": {
