@@ -11,14 +11,17 @@ import { rectCollides } from './util/CollisionDetection'
 import { degreesToRadians } from './util/Conversions'
 import { Vector2, Vector2Normalised } from './util/Vectors'
 
+//import sunrise from './images/backgrounds/sunrise.jpg'
+//let sunrise = require('./images/backgrounds/sunrise.jpg')
+
 import { Interpreter } from './agent/Interpreter'
 
 export enum Actions {
-  MOVE_UP,
-  MOVE_RIGHT,
-  MOVE_DOWN,
-  MOVE_LEFT,
-  SHOOT
+  MOVE_UP = 'MOVE_UP',
+  MOVE_RIGHT = 'MOVE_RIGHT',
+  MOVE_DOWN = 'MOVE_DOWN',
+  MOVE_LEFT = 'MOVE_LEFT',
+  SHOOT = 'SHOOT'
 }
 
 export class SpaceInvaders {
@@ -43,25 +46,25 @@ export class SpaceInvaders {
   private canvas: HTMLCanvasElement
 
   private context2D: CanvasRenderingContext2D
-  private background = new Image()
+  // private background = new Image() remove for now as ai agent needs as simple as possible
 
   private spaceColor: string = 'black'
 
   private keyStatus = {}
-  private keyStatusOnce = {} //only runs 1 frame
+  private ActionsOnce = {} //only runs 1 frame
 
   private lastFrame: number = new Date().getTime()
 
   /**
    * Basically we figure out the best width for our canvas at start up.
    */
-  constructor(hostElement: HTMLCanvasElement, private isAgentMode = false) {
+  constructor(hostElement: HTMLCanvasElement) {
     this.canvas = hostElement
     new Date().getTime()
     this.context2D = this.canvas.getContext('2d')
     this.canvas.width = SpaceInvaders.CANVAS_WIDTH
     this.canvas.height = this.canvas.width / SpaceInvaders.ASPECT_RATIO
-    this.background.src = require('./images/backgrounds/sunrise.jpg')
+    //this.background.src = sunrise
 
     // all keys are down to start
     for (const code in KEY_CODES) {
@@ -79,10 +82,12 @@ export class SpaceInvaders {
     this.interpreter = new Interpreter()
   }
 
+  /**
+   * This is for external egents to hook into the game to control it, instead of the default keyboard commands like up down shoot
+   */
   private addExternalEvents() {
-    //document.body.addEventListener(Actions.MOVE_LEFT as st , ()=>{
-    document.body.addEventListener('left', () => {
-      this.keyStatusOnce['left'] = true
+    document.body.addEventListener(Actions.MOVE_LEFT, () => {
+      this.ActionsOnce[Actions.MOVE_LEFT] = true
     })
   }
 
@@ -249,11 +254,18 @@ export class SpaceInvaders {
   }
 
   /**
-   * Both manual mode and agent mode
+   * listens to both manual mode and agent mode at the same time
+   * Manual commands always overwrite the agent
    * In manual mode the app listens to keyboard presses and agent mode to actions via dom events (see index.ts)
    * @param elapsedTime
    */
   public updatePlayer(elapsedTime: number) {
+    //  listen to agent events
+
+    if (this.ActionsOnce[Actions.MOVE_LEFT] === true) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)), true)
+    }
+    // listen to user keyboard (overrides the agent if it sets somethings)
     if (this.keyStatus[KEY_CODES.LEFT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
         this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)))
@@ -275,7 +287,12 @@ export class SpaceInvaders {
     } else if (this.keyStatus[KEY_CODES.DOWN]) {
       this.player.updateDirection(new Vector2Normalised(degreesToRadians(180)))
     } else {
-      this.player.remainStationary()
+      // this cancels the movement of any manual input if non of the flags are set, we don't do it if agent moved
+      if (
+        !(Object.entries(this.ActionsOnce).length === 0 && this.ActionsOnce.constructor === Object)
+      ) {
+        this.player.remainStationary()
+      }
     }
 
     if (this.keyStatus[KEY_CODES.SPACE]) {
@@ -285,16 +302,19 @@ export class SpaceInvaders {
       }
     }
 
-    if (this.isAgentMode) {
-      // reset states
-      this.keyStatus[KEY_CODES.LEFT] = false
-      this.keyStatus[KEY_CODES.RIGHT] = false
-      this.keyStatus[KEY_CODES.UP] = false
-      this.keyStatus[KEY_CODES.DOWN] = false
-    }
+    /* if (this.isAgentMode) {
+       // reset states
+       this.keyStatus[KEY_CODES.LEFT] = false
+       this.keyStatus[KEY_CODES.RIGHT] = false
+       this.keyStatus[KEY_CODES.UP] = false
+       this.keyStatus[KEY_CODES.DOWN] = false
+     }*/
 
     this.player.update(elapsedTime)
     this.clamp(this.player)
+
+    //clear any actions
+    this.ActionsOnce = {}
   }
 
   public ReverseEnemyDirectionIfOutOfBoundsAndDropDown(): void {

@@ -17,6 +17,8 @@ export class Player implements IGameObject {
   lastShotTime: number = 0
   fireRatePerSec = 4
 
+  lastCommandWasAgentEvent = false
+
   private directionVector: Vector2 = new Vector2(0, 0)
 
   constructor(position) {
@@ -30,6 +32,9 @@ export class Player implements IGameObject {
   update(elapsedUnit) {
     this.position.x += this.directionVector.x * elapsedUnit * MEDIUM_MOVEMENT_SPEED
     this.position.y += this.directionVector.y * elapsedUnit * MEDIUM_MOVEMENT_SPEED
+    if(this.lastCommandWasAgentEvent){ // agent decides one frame at a time
+      this.remainStationary()
+    }
   }
 
   midpoint() {
@@ -59,8 +64,14 @@ export class Player implements IGameObject {
     }
   }
 
-  updateDirection(directionVector: Vector2Normalised) {
+  /**
+   *
+   * @param directionVector
+   * @param lastCommandWasAgentEvent if this is set then we revert the ship to remain stationary after one update loop, unless manual overide
+   */
+  updateDirection(directionVector: Vector2Normalised, lastCommandWasAgentEvent = false) {
     this.directionVector = directionVector
+    this.lastCommandWasAgentEvent = lastCommandWasAgentEvent
   }
 
   remainStationary() {
