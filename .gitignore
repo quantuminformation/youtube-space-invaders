@@ -1,7 +1,0 @@
-dist
-node_modules
-.idea
-npm-debug.log
-.cache
-.history
-build
