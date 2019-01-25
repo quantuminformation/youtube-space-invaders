@@ -32,7 +32,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
     "start": "webpack --watch",
-    "build": "webpack "
+    "build": "webpack ",
+    "deploy": "rm -rf dist && npm run build && git add --force dist && git add -A && git commit -m 'build files' && git push origin `git subtree split --prefix dist master`:gh-pages --force"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,6 @@
   "bugs": {
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
-  "pre-commit": "lint",
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {
     "tslint-config-standard": "^8.0.1"

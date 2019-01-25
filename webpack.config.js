@@ -5,7 +5,7 @@ var WebpackBuildNotifierPlugin = require('webpack-build-notifier')
 
 const PATHS = {
   src: path.join(__dirname, './'),
-  build: path.join(__dirname, './build')
+  build: path.join(__dirname, './dist')
 }
 
 module.exports = {
