@@ -89,6 +89,15 @@ export class SpaceInvaders {
     document.body.addEventListener(Actions.MOVE_LEFT, () => {
       this.ActionsOnce[Actions.MOVE_LEFT] = true
     })
+    document.body.addEventListener(Actions.MOVE_RIGHT, () => {
+      this.ActionsOnce[Actions.MOVE_RIGHT] = true
+    })
+    document.body.addEventListener(Actions.MOVE_UP, () => {
+      this.ActionsOnce[Actions.MOVE_UP] = true
+    })
+    document.body.addEventListener(Actions.MOVE_DOWN, () => {
+      this.ActionsOnce[Actions.MOVE_DOWN] = true
+    })
   }
 
   public update() {
@@ -263,8 +272,15 @@ export class SpaceInvaders {
     //  listen to agent events
 
     if (this.ActionsOnce[Actions.MOVE_LEFT] === true) {
-      this.player.updateDirection(new Vector2Normalised(degreesToRadians(305)), true)
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(270)), true)
+    } else if (this.ActionsOnce[Actions.MOVE_RIGHT] === true) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(90)), true)
+    } else if (this.ActionsOnce[Actions.MOVE_UP] === true) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(0)), true)
+    } else if (this.ActionsOnce[Actions.MOVE_DOWN] === true) {
+      this.player.updateDirection(new Vector2Normalised(degreesToRadians(180)), true)
     }
+
     // listen to user keyboard (overrides the agent if it sets somethings)
     if (this.keyStatus[KEY_CODES.LEFT]) {
       if (this.keyStatus[KEY_CODES.UP]) {
@@ -289,7 +305,8 @@ export class SpaceInvaders {
     } else {
       // this cancels the movement of any manual input if non of the flags are set, we don't do it if agent moved
       if (
-        !(Object.entries(this.ActionsOnce).length === 0 && this.ActionsOnce.constructor === Object)
+        Object.entries(this.ActionsOnce).length === 0 &&
+        this.ActionsOnce.constructor === Object
       ) {
         this.player.remainStationary()
       }

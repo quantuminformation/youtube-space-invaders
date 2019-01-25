@@ -17,6 +17,14 @@ document.querySelector('#rightBtn').addEventListener('click', function() {
   const newEvent = new CustomEvent(Actions.MOVE_RIGHT)
   document.body.dispatchEvent(newEvent)
 })
+document.querySelector('#upBtn').addEventListener('click', function() {
+  const newEvent = new CustomEvent(Actions.MOVE_UP)
+  document.body.dispatchEvent(newEvent)
+})
+document.querySelector('#downBtn').addEventListener('click', function() {
+  const newEvent = new CustomEvent(Actions.MOVE_DOWN)
+  document.body.dispatchEvent(newEvent)
+})
 
 function gameLoop() {
   requestAnimationFrame(gameLoop)
