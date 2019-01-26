@@ -14,8 +14,6 @@ import { Vector2, Vector2Normalised } from './util/Vectors'
 //import sunrise from './images/backgrounds/sunrise.jpg'
 //let sunrise = require('./images/backgrounds/sunrise.jpg')
 
-import { Interpreter } from './agent/Interpreter'
-
 export enum Actions {
   MOVE_UP = 'MOVE_UP',
   MOVE_RIGHT = 'MOVE_RIGHT',
@@ -31,8 +29,6 @@ export class SpaceInvaders {
 
   static gameState = INITIALISING
   static score: number = 0
-
-  public interpreter: Interpreter
 
   private waveManager = new WaveManager()
   private player: Player
@@ -74,13 +70,9 @@ export class SpaceInvaders {
     }
 
     this.initGame()
-    this.setupAgent()
     this.addExternalEvents()
   }
 
-  public setupAgent() {
-    this.interpreter = new Interpreter()
-  }
 
   /**
    * This is for external egents to hook into the game to control it, instead of the default keyboard commands like up down shoot
@@ -203,10 +195,6 @@ export class SpaceInvaders {
     this.keyStatus[evt.keyCode] = false
   }
 
-  public onAction(action: string) {
-    // this.keyStatus[evt.keyCode] = false
-  }
-
   public initGame() {
     // bottom middle
     this.player = new Player(
@@ -258,8 +246,6 @@ export class SpaceInvaders {
       thing.draw(this.context2D)
     })
     this.player.draw(this.context2D)
-
-    this.interpreter.readPixels()
   }
 
   /**

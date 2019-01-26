@@ -1,8 +1,8 @@
 /**
- * Created by nikos on 27/07/2018.
+ * This converts the game into a smaller image to be sent to train the agent
  */
 export class Interpreter {
-  public readPixels() {
+  readPixels() {
     const gameCanvas: HTMLCanvasElement = document.querySelector(
       '#game-canvas'
     ) as HTMLCanvasElement
@@ -41,4 +41,9 @@ export class Interpreter {
     // overwrite original image
     monoCanvasCtx.putImageData(imageData, 0, 0)
   }
+  /**
+   * todo
+   * Set up TensorFlow.js stuff
+   */
+  public setupAgent() {}
 }
