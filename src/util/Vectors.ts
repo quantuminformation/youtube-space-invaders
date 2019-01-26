@@ -1,30 +1,27 @@
 export class Dimensions2 {
-  constructor (public width: number, public height: number) {
-  }
+  constructor(public width: number, public height: number) {}
 }
 
 export class Vector2 {
+  constructor(public x: number, public y: number) {}
 
-  constructor (public x: number, public y: number) {
-  }
-
-  public add (otherVector: Vector2): Vector2 {
+  public add(otherVector: Vector2): Vector2 {
     return new Vector2(this.x + otherVector.x, this.y + otherVector.y)
   }
 
-  public addTwo (x: number, y: number): Vector2 {
+  public addTwo(x: number, y: number): Vector2 {
     return new Vector2(this.x + x, this.y + y)
   }
 
-  public reverse (): Vector2 {
+  public reverse(): Vector2 {
     return new Vector2(-this.x, -this.y)
   }
 
-  public magnitude (): number {
+  public magnitude(): number {
     return Math.sqrt(this.x ** 2 + this.y ** 2)
   }
 
-  public angle (): number {
+  public angle(): number {
     return Math.atan2(this.y, this.x) - degreesToRadians(-90)
   }
 
@@ -34,7 +31,7 @@ export class Vector2 {
    * @param rotatingDegrees
    * @returns {Vector2}
    */
-  public rotateBy (radians: number): Vector2 {
+  public rotateBy(radians: number): Vector2 {
     let newAngleRads = Math.atan2(this.x, this.y) + radians
     let mag = this.magnitude()
     return new Vector2(mag * Math.sin(newAngleRads), mag * Math.cos(newAngleRads))
@@ -42,15 +39,16 @@ export class Vector2 {
 }
 
 export class Vector2Normalised extends Vector2 {
-  constructor (radians: number) {
+  constructor(radians: number) {
     super(Math.sin(radians), -Math.cos(radians))
   }
 }
 
-export function degreesToRadians (degrees: number): number {
-  return (degrees / 360 ) * 2 * Math.PI
+export function degreesToRadians(degrees: number): number {
+  return (degrees / 360) * 2 * Math.PI
 }
-export function radiansToDegress (radians: number): number {
+
+export function radiansToDegress(radians: number): number {
   return (radians * 360) / (2 * Math.PI)
 }
 
@@ -58,8 +56,10 @@ export function radiansToDegress (radians: number): number {
  * Returns array of vectors equally spaced measured from both sidesfor the x origin in normal maths xy chart
  * the shooter will then modify based on its rotation of the firing gun
  */
-export function getFanSpreadVectors (numberOfBullets: number, spreadAngleRadians: number): Array<Vector2Normalised> {
-
+export function getFanSpreadVectors(
+  numberOfBullets: number,
+  spreadAngleRadians: number
+): Array<Vector2Normalised> {
   let arr: Array<Vector2Normalised> = []
   let angleGap: number = spreadAngleRadians / numberOfBullets
   let startingAngle: number = spreadAngleRadians / 2

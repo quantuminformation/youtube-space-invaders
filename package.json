@@ -1,32 +1,39 @@
 {
-  "name": "youtube-space-invaders",
-  "version": "1.1.0",
-  "description": "Simple setup for client-only projects",
+  "name": "space-invaders",
+  "version": "0.1.0",
+  "description": "Space invaders inbuilt for your website without any iframes",
   "main": "webpack.config.js",
   "devDependencies": {
-    "css-loader": "^0.28.0",
+    "@types/node": "^10.1.2",
+    "awesome-typescript-loader": "^5.0.0",
+    "css-loader": "^2.1.0",
     "css-variables": "^0.1.0",
-    "html-webpack-plugin": "^2.24.1",
-    "normalize.css": "^6.0.0",
-    "postcss-calc": "^5.3.1",
-    "postcss-css-variables": "^0.7.0",
-    "postcss-custom-media": "^5.0.1",
-    "postcss-import": "^9.1.0",
-    "postcss-loader": "^1.2.2",
-    "postcss-nested": "^1.0.0",
+    "file-loader": "^3.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "normalize.css": "^8.0.0",
+    "postcss-calc": "^7.0.1",
+    "postcss-css-variables": "^0.11.0",
+    "postcss-custom-media": "^7.0.7",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.1.1",
     "pre-commit": "^1.2.2",
-    "style-loader": "^0.16.1",
-    "ts-loader": "^2.0.3",
-    "tslint": "^5.0.0",
-    "typescript": "^2.0.3",
-    "url-loader": "^0.5.7",
-    "webpack": "^2.1.0-beta.25",
-    "webpack-build-notifier": "^0.1.13"
+    "prettier": "^1.16.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.10.0",
+    "typescript": "^3.2.4",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.8.3",
+    "webpack-build-notifier": "^0.1.25",
+    "webpack-cli": "^3.0.8"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint 'src/**/*.ts'",
-    "start": "webpack --watch --watch-poll"
+    "start": "webpack --watch",
+    "build": "webpack ",
+    "deploy": "rm -rf dist && npm run build && git add --force dist && git add -A && git commit -m 'build files' && git push origin `git subtree split --prefix dist master`:gh-pages --force"
   },
   "repository": {
     "type": "git",
@@ -38,10 +45,8 @@
   "bugs": {
     "url": "https://github.com/QuantumInformation/youtube-space-invaders/issues"
   },
-  "pre-commit": "lint",
-
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {
-    "tslint-config-standard": "^4.0.0"
+    "tslint-config-standard": "^8.0.1"
   }
 }

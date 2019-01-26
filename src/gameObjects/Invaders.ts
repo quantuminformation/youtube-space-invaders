@@ -4,41 +4,37 @@ import { AbstractInvader } from './AbstractInvader'
 import { degreesToRadians } from '../util/Conversions'
 
 export class LightInvader extends AbstractInvader {
-
-  constructor (position: Vector2 = new Vector2(0, 0)) {
+  constructor(position: Vector2 = new Vector2(0, 0)) {
     super(position)
     this.probabilityOfShooting = 0.001
     this.health = 1
     this.pointsValue = 10
 
-    this.image.src = require('url-loader?limit=10000!../images/lightInvader.svg')
-
+    this.image.src = require('../images/lightInvader.svg')
   }
 }
 
 export class MediumInvader extends AbstractInvader {
-
-  constructor (position: Vector2 = new Vector2(0, 0)) {
+  constructor(position: Vector2 = new Vector2(0, 0)) {
     super(position)
     this.probabilityOfShooting = 0.002
     this.health = 3
     this.pointsValue = 30
 
-    this.image.src = require('url-loader?limit=10000!../images/MediumInvader.svg')
+    this.image.src = require('../images/MediumInvader.svg')
   }
 }
 export class HeavyInvader extends AbstractInvader {
-
-  constructor (position: Vector2 = new Vector2(0, 0)) {
+  constructor(position: Vector2 = new Vector2(0, 0)) {
     super(position)
     this.probabilityOfShooting = 0.004
     this.pointsValue = 60
 
     this.health = 5
-    this.image.src = require('url-loader?limit=10000!../images/HeavyInvader.svg')
+    this.image.src = require('../images/HeavyInvader.svg')
   }
 
-  shootAhead (): Array<Bullet> {
+  public shootAhead(): Array<Bullet> {
     // todo Sound.play('shoot')
 
     let self = this
@@ -50,7 +46,10 @@ export class HeavyInvader extends AbstractInvader {
       let vectors = getFanSpreadVectors(10, degreesToRadians(45))
       let bulletsToFire: Array<Bullet> = []
       vectors.forEach(item => {
-        let b = new BasicBullet(this.midpoint(), new Vector2Normalised(this.facingAngleRad + item.angle()))
+        let b = new BasicBullet(
+          this.midpoint(),
+          new Vector2Normalised(this.facingAngleRad + item.angle())
+        )
         bulletsToFire.push(b)
       })
       return bulletsToFire

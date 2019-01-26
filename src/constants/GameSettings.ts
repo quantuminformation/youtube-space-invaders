@@ -1,4 +1,4 @@
-export const GAME_SPEED: number = 50 // the higher the number the faster the game will run, all movemments are effected by this number
+export const GAME_SPEED: number = 50 // the higher the number the faster the game will run, all movements are effected by this number
 
 export const VERY_SLOW_MOVEMENT_SPEED: number = 1
 export const SLOW_MOVEMENT_SPEED: number = 2

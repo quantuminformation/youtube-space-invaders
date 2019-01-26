@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5"
+    "target": "es2015",
+    "types": ["node"],
+    "lib": ["dom", "es2017"]
   },
   "include": ["./src/**/*.ts"],
   "alwaysStrict": true,
-  "types": [
-    "node"
-  ]
-
+  "moduleResolution": "node"
 }
