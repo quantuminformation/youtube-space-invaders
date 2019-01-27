@@ -38,3 +38,7 @@ document.querySelector('#downBtn').addEventListener('click', function() {
   const newEvent = new CustomEvent(Actions.MOVE_DOWN)
   document.body.dispatchEvent(newEvent)
 })
+document.querySelector('#shootBtn').addEventListener('click', function() {
+  const newEvent = new CustomEvent(Actions.SHOOT)
+  document.body.dispatchEvent(newEvent)
+})

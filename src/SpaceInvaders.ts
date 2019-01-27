@@ -90,6 +90,9 @@ export class SpaceInvaders {
     document.body.addEventListener(Actions.MOVE_DOWN, () => {
       this.ActionsOnce[Actions.MOVE_DOWN] = true
     })
+	document.body.addEventListener(Actions.SHOOT, () => {
+      this.ActionsOnce[Actions.SHOOT] = true
+    })
   }
 
   public update() {
@@ -265,7 +268,12 @@ export class SpaceInvaders {
       this.player.updateDirection(new Vector2Normalised(degreesToRadians(0)), true)
     } else if (this.ActionsOnce[Actions.MOVE_DOWN] === true) {
       this.player.updateDirection(new Vector2Normalised(degreesToRadians(180)), true)
-    }
+    } else if (this.ActionsOnce[Actions.SHOOT] === true) {
+	  const bullet = this.player.shootAhead()
+	  if (bullet) {
+	    this.playerBullets.push(bullet)
+	  }
+	}
 
     // listen to user keyboard (overrides the agent if it sets somethings)
     if (this.keyStatus[KEY_CODES.LEFT]) {
