@@ -6,6 +6,8 @@ var tf = require('@tensorflow/tfjs');
  * This converts the game into a smaller image to be sent to train the agent
  */
 export class Interpreter {
+  public static experience: any = []
+
   readPixels() {
     const gameCanvas: HTMLCanvasElement = document.querySelector(
       '#game-canvas'
@@ -100,6 +102,12 @@ export class Interpreter {
                cl.action
          ],
          outputs: cl.output
+    });
+
+    // Add first game to experience replay buffer
+    Interpreter.experience.push({
+          'states': [],
+          'reward': 0
     });
 
     // Return object containing actor and critic networks for evaluation
