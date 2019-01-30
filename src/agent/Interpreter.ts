@@ -48,6 +48,7 @@ export class Interpreter {
   }
 
   public setupAgent() {
+    // Get data from canvas
     var data = this.readPixels();
     const agent = {
       'layers': {
@@ -59,18 +60,23 @@ export class Interpreter {
       'model': null
     };
     var al = agent.layers;
+    // Define data flow
     al.output = al.dense.apply(
           al.flatten.apply(
                 al.input
           )
     );
+    // Build model
     agent.model = tf.model({inputs: al.input, outputs: al.output});
 
     const critic = {
       'layers': {
+        // Input handling
         'state': tf.input({shape: [data.width, data.height, 4]}),
+        // Flatten game state so it can be combined with agent actions
         'flatten': tf.layers.flatten(),
         'action': tf.input({shape: [5]}),
+        // Combine inputs
         'concat': tf.layers.concatenate(),
         'dense': tf.layers.dense({units: 1}),
         'output': null
@@ -78,6 +84,7 @@ export class Interpreter {
       'model': null
     };
     var cl = critic.layers;
+    // Define data flow
     cl.output = cl.dense.apply(
           cl.concat.apply([
                 cl.flatten.apply(
@@ -86,6 +93,7 @@ export class Interpreter {
                 cl.action
           ])
     );
+    // Create model from input and output layers
     critic.model = tf.model({
          inputs: [
                cl.state,
@@ -94,6 +102,7 @@ export class Interpreter {
          outputs: cl.output
     });
 
+    // Return object containing actor and critic networks for evaluation
     return {
           'agent': agent,
           'critic': critic
@@ -101,10 +110,15 @@ export class Interpreter {
   }
 
   public agentAction(ai) {
+    // Get game state data
     var data = this.readPixels();
+    // Convert canvas data to a tensor
     const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
+    // Run prediction using agent model on current game state
     var prediction = ai.agent.model.predict(inputTensor).dataSync();
 
+    // Handle actions chosen by the agent
+    // Movement controls
     if (prediction[0] > 0.5) {
       const newEvent = new CustomEvent(Actions.MOVE_LEFT);
       document.body.dispatchEvent(newEvent);
@@ -121,6 +135,7 @@ export class Interpreter {
       const newEvent = new CustomEvent(Actions.MOVE_DOWN);
       document.body.dispatchEvent(newEvent);
     }
+    // Shoot
     if (prediction[4] > 0.5) {
       const newEvent = new CustomEvent(Actions.SHOOT);
       document.body.dispatchEvent(newEvent);
