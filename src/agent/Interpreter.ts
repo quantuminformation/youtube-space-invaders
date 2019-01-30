@@ -63,6 +63,33 @@ export class Interpreter {
     );
     agent.model = tf.model({inputs: agent.layers.input, outputs: agent.layers.output});
 
+    const critic = {
+      'layers': {
+        'state': tf.input({shape: [data.width, data.height, 4]}),
+        'flatten': tf.layers.flatten(),
+        'action': tf.input({shape: [5]}),
+        'concat': tf.layers.concatenate(),
+        'dense': tf.layers.dense({units: 1}),
+        'output': null
+      },
+      'model': null
+    };
+    critic.layers.output = critic.layers.dense.apply(
+          critic.layers.concat.apply([
+                critic.layers.flatten.apply(
+                      critic.layers.state
+                ),
+                critic.layers.action
+          ])
+    );
+    critic.model = tf.model({
+         inputs: [
+               critic.layers.state,
+               critic.layers.action
+         ],
+         outputs: critic.layers.output
+    });
+
     const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
     agent.model.predict(inputTensor).print();
   }
