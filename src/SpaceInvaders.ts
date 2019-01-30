@@ -31,6 +31,7 @@ export class SpaceInvaders {
   static gameState = INITIALISING
   static score: number = 0
   static elapsedTime: number = 0
+  static gameNumber: number = 0
 
   private waveManager = new WaveManager()
   private player: Player
@@ -98,8 +99,8 @@ export class SpaceInvaders {
   }
 
   public update() {
-    const start = new Date().getTime()
-    SpaceInvaders.elapsedTime = start - this.lastFrame
+    const startTime = new Date().getTime()
+    SpaceInvaders.elapsedTime = startTime - this.lastFrame
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
     const elapsedReduced: number = (SpaceInvaders.elapsedTime / 1000.0) * GameSettings.GAME_SPEED
@@ -134,7 +135,7 @@ export class SpaceInvaders {
     }
 
     this.drawBattleScene()
-    this.lastFrame = start
+    this.lastFrame = startTime
   }
 
   /**
@@ -442,4 +443,9 @@ export class SpaceInvaders {
       return
     }
   }
+
+  // public resetGame() {
+  //   SpaceInvaders.gameState = INITIALISING
+  //   this.waveManager = new WaveManager()
+  // }
 }
