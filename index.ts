@@ -23,6 +23,13 @@ function setupGame() {
     game.update()
     interpreter.readPixels()
     interpreter.agentAction(ai);
+
+    if (SpaceInvaders.gameState == GAME_OVER) {
+      SpaceInvaders.gameState = INITIALISING
+      interpreter.endGame()
+      SpaceInvaders.gameNumber ++
+      reset()
+    }
   }
 
   gameLoop()
