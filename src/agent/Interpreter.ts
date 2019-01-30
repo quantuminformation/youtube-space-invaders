@@ -56,12 +56,13 @@ export class Interpreter {
       },
       'model': null
     };
-    agent.layers.output = agent.layers.dense.apply(
-          agent.layers.flatten.apply(
-                agent.layers.input
+    var al = agent.layers;
+    al.output = al.dense.apply(
+          al.flatten.apply(
+                al.input
           )
     );
-    agent.model = tf.model({inputs: agent.layers.input, outputs: agent.layers.output});
+    agent.model = tf.model({inputs: al.input, outputs: al.output});
 
     const critic = {
       'layers': {
@@ -74,20 +75,21 @@ export class Interpreter {
       },
       'model': null
     };
-    critic.layers.output = critic.layers.dense.apply(
-          critic.layers.concat.apply([
-                critic.layers.flatten.apply(
-                      critic.layers.state
+    var cl = critic.layers;
+    cl.output = cl.dense.apply(
+          cl.concat.apply([
+                cl.flatten.apply(
+                      cl.state
                 ),
-                critic.layers.action
+                cl.action
           ])
     );
     critic.model = tf.model({
          inputs: [
-               critic.layers.state,
-               critic.layers.action
+               cl.state,
+               cl.action
          ],
-         outputs: critic.layers.output
+         outputs: cl.output
     });
 
     const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
