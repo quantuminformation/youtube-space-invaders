@@ -149,6 +149,13 @@ export class Interpreter {
       document.body.dispatchEvent(newEvent);
     }
 
+    if (Math.random() < 0.01) {
+          Interpreter.experience[SpaceInvaders.gameNumber].states.push({
+                'gameState': Array.from(data.data),
+                'action': prediction
+          })
+    }
+
     for (var i = 0; i < 5; i ++) {
       var indicator = document.querySelector('#prob' + (i + 1));
       indicator.innerHTML = prediction[i].toFixed(2);
