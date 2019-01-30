@@ -168,6 +168,17 @@ export class Interpreter {
     }
   }
 
+  // Handle reinforcement learning events that must be done when a game ends
+  public endGame() {
+    // Calculate and store reward for game after it has ended
+    Interpreter.experience[SpaceInvaders.gameNumber].reward = new Interpreter().reward();
+    // Add a new game to the experience replay buffer
+    Interpreter.experience.push({
+          'states': [],
+          'reward': 0
+    });
+  }
+
   // Generate composite reward value after game is complete
   public reward() {
     return SpaceInvaders.score + (SpaceInvaders.elapsedTime / 1000);
