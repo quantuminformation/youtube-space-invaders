@@ -7,6 +7,7 @@ import { IGameObject } from './gameObjects/IGameObject'
 import { Player } from './gameObjects/Player'
 import { DestructibleScenery, PlayerBase } from './gameObjects/PlayerBase'
 import { WaveManager } from './story/WaveManager'
+import { Interpreter } from './agent/Interpreter'
 import { rectCollides } from './util/CollisionDetection'
 import { degreesToRadians } from './util/Conversions'
 import { Vector2, Vector2Normalised } from './util/Vectors'
@@ -29,6 +30,7 @@ export class SpaceInvaders {
 
   static gameState = INITIALISING
   static score: number = 0
+  static elapsedTime: number = 0
 
   private waveManager = new WaveManager()
   private player: Player
@@ -97,10 +99,10 @@ export class SpaceInvaders {
 
   public update() {
     const start = new Date().getTime()
-    const elapsedTime: number = start - this.lastFrame
+    SpaceInvaders.elapsedTime = start - this.lastFrame
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
-    const elapsedReduced: number = (elapsedTime / 1000.0) * GameSettings.GAME_SPEED
+    const elapsedReduced: number = (SpaceInvaders.elapsedTime / 1000.0) * GameSettings.GAME_SPEED
 
     this.drawBackground()
 

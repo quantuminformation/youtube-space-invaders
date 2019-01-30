@@ -1,4 +1,4 @@
-import { Actions } from "../SpaceInvaders";
+import { Actions, SpaceInvaders } from "../SpaceInvaders";
 
 var tf = require('@tensorflow/tfjs');
 
@@ -151,5 +151,10 @@ export class Interpreter {
         indicator.setAttribute('style', '');
       }
     }
+  }
+
+  // Generate composite reward value after game is complete
+  public reward() {
+    return SpaceInvaders.score + (SpaceInvaders.elapsedTime / 1000);
   }
 }
