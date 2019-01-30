@@ -1,3 +1,5 @@
+var tf = require('@tensorflow/tfjs');
+
 /**
  * This converts the game into a smaller image to be sent to train the agent
  */

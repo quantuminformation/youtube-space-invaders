@@ -16,6 +16,8 @@ function setupGame() {
     game.update()
     interpreter.readPixels()
   }
+  interpreter.setupAgent();
+
   gameLoop()
 }
 setupGame()
