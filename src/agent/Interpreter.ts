@@ -1,3 +1,5 @@
+import { Actions } from "../SpaceInvaders";
+
 var tf = require('@tensorflow/tfjs');
 
 /**
@@ -92,7 +94,36 @@ export class Interpreter {
          outputs: cl.output
     });
 
+    return {
+          'agent': agent,
+          'critic': critic
+    };
+  }
+
+  public agentAction(ai) {
+    var data = this.readPixels();
     const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
-    agent.model.predict(inputTensor).print();
+    var prediction = ai.agent.model.predict(inputTensor).dataSync();
+
+    if (prediction[0] > 0.5) {
+      const newEvent = new CustomEvent(Actions.MOVE_LEFT);
+      document.body.dispatchEvent(newEvent);
+    }
+    if (prediction[1] > 0.5) {
+      const newEvent = new CustomEvent(Actions.MOVE_RIGHT);
+      document.body.dispatchEvent(newEvent);
+    }
+    if (prediction[2] > 0.5) {
+      const newEvent = new CustomEvent(Actions.MOVE_UP);
+      document.body.dispatchEvent(newEvent);
+    }
+    if (prediction[3] > 0.5) {
+      const newEvent = new CustomEvent(Actions.MOVE_DOWN);
+      document.body.dispatchEvent(newEvent);
+    }
+    if (prediction[4] > 0.5) {
+      const newEvent = new CustomEvent(Actions.SHOOT);
+      document.body.dispatchEvent(newEvent);
+    }
   }
 }

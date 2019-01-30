@@ -10,13 +10,15 @@ function setupGame() {
   window.addEventListener('keydown', game.onKeyDown.bind(game))
   window.addEventListener('keyup', game.onKeyUp.bind(game))
 
+  const ai = interpreter.setupAgent();
   function gameLoop() {
     requestAnimationFrame(gameLoop)
     // Drawing code goes here
     game.update()
     interpreter.readPixels()
+
+    interpreter.agentAction(ai);
   }
-  interpreter.setupAgent();
 
   gameLoop()
 }
