@@ -1,14 +1,20 @@
 import { SpaceInvaders } from './src/SpaceInvaders'
 import { Actions } from './src/SpaceInvaders'
 import { Interpreter } from './src/agent/Interpreter'
+import { GAME_OVER, INITIALISING } from './src/constants/GameStates';
 
 function setupGame() {
   const interpreter = new Interpreter()
-  let game = new SpaceInvaders(document.querySelector('#game-canvas'))
+  var game = undefined
+
+  function reset() {
+    game = new SpaceInvaders(document.querySelector('#game-canvas'))
+    window.addEventListener('keydown', game.onKeyDown.bind(game))
+    window.addEventListener('keyup', game.onKeyUp.bind(game))
+  }
+  reset();
 
   // game.handleCollisions.bind(game)
-  window.addEventListener('keydown', game.onKeyDown.bind(game))
-  window.addEventListener('keyup', game.onKeyUp.bind(game))
 
   const ai = interpreter.setupAgent();
   function gameLoop() {
@@ -16,7 +22,6 @@ function setupGame() {
     // Drawing code goes here
     game.update()
     interpreter.readPixels()
-
     interpreter.agentAction(ai);
   }
 
