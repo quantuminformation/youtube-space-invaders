@@ -140,5 +140,16 @@ export class Interpreter {
       const newEvent = new CustomEvent(Actions.SHOOT);
       document.body.dispatchEvent(newEvent);
     }
+
+    for (var i = 0; i < 5; i ++) {
+      var indicator = document.querySelector('#prob' + (i + 1));
+      indicator.innerHTML = prediction[i].toFixed(2);
+      if (prediction[i] > 0.5) {
+        indicator.setAttribute('style', 'background-color: blue;');
+      }
+      else {
+        indicator.setAttribute('style', '');
+      }
+    }
   }
 }
