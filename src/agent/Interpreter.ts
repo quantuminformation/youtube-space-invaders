@@ -42,10 +42,28 @@ export class Interpreter {
 
     // overwrite original image
     monoCanvasCtx.putImageData(imageData, 0, 0)
+    return imageData;
   }
-  /**
-   * todo
-   * Set up TensorFlow.js stuff
-   */
-  public setupAgent() {}
+
+  public setupAgent() {
+    var data = this.readPixels();
+    const agent = {
+      'layers': {
+        'input': tf.input({shape: [data.width, data.height, 4]}),
+        'flatten': tf.layers.flatten(),
+        'dense': tf.layers.dense({units: 5, activation: 'sigmoid'}),
+        'output': null
+      },
+      'model': null
+    };
+    agent.layers.output = agent.layers.dense.apply(
+          agent.layers.flatten.apply(
+                agent.layers.input
+          )
+    );
+    agent.model = tf.model({inputs: agent.layers.input, outputs: agent.layers.output});
+
+    const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
+    agent.model.predict(inputTensor).print();
+  }
 }
