@@ -24,9 +24,9 @@
     "tslint": "^5.10.0",
     "typescript": "^3.2.4",
     "url-loader": "^1.0.1",
-    "webpack": "^4.8.3",
+    "webpack": "^4.29.0",
     "webpack-build-notifier": "^0.1.25",
-    "webpack-cli": "^3.0.8"
+    "webpack-cli": "^3.2.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -47,6 +47,8 @@
   },
   "homepage": "https://github.com/QuantumInformation/youtube-space-invaders#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^0.14.2",
+    "ts-node": "^8.0.2",
     "tslint-config-standard": "^8.0.1"
   }
 }
