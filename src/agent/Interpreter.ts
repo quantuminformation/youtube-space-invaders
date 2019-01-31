@@ -124,7 +124,7 @@ export class Interpreter {
     };
   }
 
-  public agentAction(ai) {
+  public async agentAction(ai) {
     // Get game state data
     var data = this.readPixels();
     var prediction = tf.tidy(
@@ -166,6 +166,34 @@ export class Interpreter {
                 'action': prediction
           })
     }
+
+    if (Interpreter.experience.length > 1) {
+          const criticTrainingData = {
+            'states': [],
+            'actions': [],
+            'rewards': []
+          }
+          for (var i = 0; i < Interpreter.experience.length - 1; i ++) {
+            for (var j = 0; j < Interpreter.experience[i].states.length; j ++) {
+              criticTrainingData.states.push(Interpreter.experience[i].states[j].gameState)
+              criticTrainingData.actions.push(Interpreter.experience[i].states[j].action)
+              criticTrainingData.rewards.push(Interpreter.experience[i].reward)
+            }
+          }
+
+          tf.tidy(
+                () => {
+                      const states = tf.tensor(criticTrainingData.states, [criticTrainingData.states.length, data.width, data.height, 4])
+                      const actions = tf.tensor(criticTrainingData.actions)
+                      const rewards = tf.tensor(criticTrainingData.rewards, [criticTrainingData.states.length, 1])
+
+                      for (var i = 0; i < 1; i++) {
+                            ai.settings.optimizer.minimize(() => ai.settings.loss(ai.critic.model.predict([states, actions]), rewards));
+                      }
+                      // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
+                }
+          )
+      }
 
     for (var i = 0; i < 5; i ++) {
       var indicator = document.querySelector('#prob' + (i + 1));
