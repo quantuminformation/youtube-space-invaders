@@ -9,12 +9,12 @@ function setupGame() {
 
   function reset() {
     game = new SpaceInvaders(document.querySelector('#game-canvas'))
+    SpaceInvaders.gameStart = new Date().getTime()
+    // game.handleCollisions.bind(game)
     window.addEventListener('keydown', game.onKeyDown.bind(game))
     window.addEventListener('keyup', game.onKeyUp.bind(game))
   }
   reset();
-
-  // game.handleCollisions.bind(game)
 
   const ai = interpreter.setupAgent();
   function gameLoop() {
@@ -22,7 +22,7 @@ function setupGame() {
     // Drawing code goes here
     game.update()
     interpreter.readPixels()
-    interpreter.agentAction(ai);
+    interpreter.agentAction(ai)
 
     if (SpaceInvaders.gameState == GAME_OVER) {
       SpaceInvaders.gameState = INITIALISING

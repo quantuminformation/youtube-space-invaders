@@ -30,6 +30,8 @@ export class SpaceInvaders {
 
   static gameState = INITIALISING
   static score: number = 0
+  static gameStart: number = 0
+  static totalTime: number = 0
   static elapsedTime: number = 0
   static gameNumber: number = 0
 
@@ -101,6 +103,7 @@ export class SpaceInvaders {
   public update() {
     const startTime = new Date().getTime()
     SpaceInvaders.elapsedTime = startTime - this.lastFrame
+    SpaceInvaders.totalTime = new Date().getTime() - SpaceInvaders.gameStart
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
     const elapsedReduced: number = (SpaceInvaders.elapsedTime / 1000.0) * GameSettings.GAME_SPEED

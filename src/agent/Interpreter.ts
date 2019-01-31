@@ -170,6 +170,9 @@ export class Interpreter {
         indicator.setAttribute('style', '');
       }
     }
+    document.querySelector('#gamesPlayed').innerHTML = SpaceInvaders.gameNumber + ' ' + (SpaceInvaders.gameNumber == 1 ? 'game' : 'games') + ' played';
+    document.querySelector('#timeElapsed').innerHTML = SpaceInvaders.totalTime + 'ms elapsed';
+    document.querySelector('#statesRecorded').innerHTML =  Interpreter.experience[SpaceInvaders.gameNumber].states.length + ' states recorded';
   }
 
   // Handle reinforcement learning events that must be done when a game ends
@@ -185,6 +188,6 @@ export class Interpreter {
 
   // Generate composite reward value after game is complete
   public reward() {
-    return SpaceInvaders.score + (SpaceInvaders.elapsedTime / 1000);
+    return SpaceInvaders.score + (SpaceInvaders.totalTime / 1000);
   }
 }
