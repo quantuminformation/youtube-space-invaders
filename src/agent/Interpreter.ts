@@ -103,6 +103,7 @@ export class Interpreter {
          ],
          outputs: cl.output
     });
+    // critic.model.compile({optimizer: 'sgd', loss: 'meanSquaredError'})
 
     // Add first game to experience replay buffer
     Interpreter.experience.push({
@@ -110,10 +111,16 @@ export class Interpreter {
           'reward': 0
     });
 
+    const settings = {
+          loss: (pred, label) => pred.sub(label).square().mean(),
+          optimizer: tf.train.sgd(0.000000001),
+    }
+
     // Return object containing actor and critic networks for evaluation
     return {
           'agent': agent,
-          'critic': critic
+          'critic': critic,
+          'settings': settings
     };
   }
 
