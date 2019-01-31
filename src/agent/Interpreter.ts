@@ -120,10 +120,14 @@ export class Interpreter {
   public agentAction(ai) {
     // Get game state data
     var data = this.readPixels();
-    // Convert canvas data to a tensor
-    const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
-    // Run prediction using agent model on current game state
-    var prediction = ai.agent.model.predict(inputTensor).dataSync();
+    var prediction = tf.tidy(
+          () => {
+                // Convert canvas data to a tensor
+                const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
+                // Run prediction using agent model on current game state
+                return ai.agent.model.predict(inputTensor).dataSync();
+          }
+    );
 
     // Handle actions chosen by the agent
     // Movement controls
