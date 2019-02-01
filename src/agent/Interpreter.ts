@@ -1,6 +1,6 @@
-import { Actions, SpaceInvaders } from "../SpaceInvaders";
+import { Actions, SpaceInvaders } from '../SpaceInvaders'
 
-var tf = require('@tensorflow/tfjs');
+var tf = require('@tensorflow/tfjs')
 
 /**
  * This converts the game into a smaller image to be sent to train the agent
@@ -46,191 +46,188 @@ export class Interpreter {
 
     // overwrite original image
     monoCanvasCtx.putImageData(imageData, 0, 0)
-    return imageData;
+    return imageData
   }
 
   public setupAgent() {
     // Get data from canvas
-    var data = this.readPixels();
+    var data = this.readPixels()
     const agent = {
-      'layers': {
-        'input': tf.input({shape: [data.width, data.height, 4]}),
-        'flatten': tf.layers.flatten(),
-        'dense': tf.layers.dense({units: 5, activation: 'sigmoid'}),
-        'output': null
+      layers: {
+        input: tf.input({ shape: [data.width, data.height, 4] }),
+        flatten: tf.layers.flatten(),
+        dense: tf.layers.dense({ units: 5, activation: 'sigmoid' }),
+        output: null
       },
-      'model': null
-    };
-    var al = agent.layers;
+      model: null
+    }
+    var al = agent.layers
     // Define data flow
-    al.output = al.dense.apply(
-          al.flatten.apply(
-                al.input
-          )
-    );
+    al.output = al.dense.apply(al.flatten.apply(al.input))
     // Build model
-    agent.model = tf.model({inputs: al.input, outputs: al.output});
+    agent.model = tf.model({ inputs: al.input, outputs: al.output })
 
     const critic = {
-      'layers': {
+      layers: {
         // Input handling
-        'state': tf.input({shape: [data.width, data.height, 4]}),
+        state: tf.input({ shape: [data.width, data.height, 4] }),
         // Flatten game state so it can be combined with agent actions
-        'flatten': tf.layers.flatten(),
-        'action': tf.input({shape: [5]}),
+        flatten: tf.layers.flatten(),
+        action: tf.input({ shape: [5] }),
         // Combine inputs
-        'concat': tf.layers.concatenate(),
-        'dense': tf.layers.dense({units: 1}),
-        'output': null
+        concat: tf.layers.concatenate(),
+        dense: tf.layers.dense({ units: 1 }),
+        output: null
       },
-      'model': null
-    };
-    var cl = critic.layers;
+      model: null
+    }
+    var cl = critic.layers
     // Define data flow
-    cl.output = cl.dense.apply(
-          cl.concat.apply([
-                cl.flatten.apply(
-                      cl.state
-                ),
-                cl.action
-          ])
-    );
+    cl.output = cl.dense.apply(cl.concat.apply([cl.flatten.apply(cl.state), cl.action]))
     // Create model from input and output layers
     critic.model = tf.model({
-         inputs: [
-               cl.state,
-               cl.action
-         ],
-         outputs: cl.output
-    });
+      inputs: [cl.state, cl.action],
+      outputs: cl.output
+    })
     // critic.model.compile({optimizer: 'sgd', loss: 'meanSquaredError'})
 
     // Add first game to experience replay buffer
     Interpreter.experience.push({
-          'states': [],
-          'reward': 0
-    });
+      states: [],
+      reward: 0
+    })
 
     const settings = {
-          loss: (pred, label) => pred.sub(label).square().mean(),
-          optimizer: tf.train.sgd(0.000000001),
+      loss: (pred, label) =>
+        pred
+          .sub(label)
+          .square()
+          .mean(),
+      optimizer: tf.train.sgd(0.000000001)
     }
 
     // Return object containing actor and critic networks for evaluation
     return {
-          'agent': agent,
-          'critic': critic,
-          'settings': settings
-    };
+      agent: agent,
+      critic: critic,
+      settings: settings
+    }
   }
 
   public async agentAction(ai) {
     // Get game state data
-    var data = this.readPixels();
-    var prediction = tf.tidy(
-          () => {
-                // Convert canvas data to a tensor
-                const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4]);
-                // Run prediction using agent model on current game state
-                return ai.agent.model.predict(inputTensor).dataSync();
-          }
-    );
+    var data = this.readPixels()
+    var prediction = tf.tidy(() => {
+      // Convert canvas data to a tensor
+      const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4])
+      // Run prediction using agent model on current game state
+      return ai.agent.model.predict(inputTensor).dataSync()
+    })
 
     // Handle actions chosen by the agent
     // Movement controls
     if (prediction[0] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_LEFT);
-      document.body.dispatchEvent(newEvent);
+      const newEvent = new CustomEvent(Actions.MOVE_LEFT)
+      document.body.dispatchEvent(newEvent)
     }
     if (prediction[1] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_RIGHT);
-      document.body.dispatchEvent(newEvent);
+      const newEvent = new CustomEvent(Actions.MOVE_RIGHT)
+      document.body.dispatchEvent(newEvent)
     }
     if (prediction[2] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_UP);
-      document.body.dispatchEvent(newEvent);
+      const newEvent = new CustomEvent(Actions.MOVE_UP)
+      document.body.dispatchEvent(newEvent)
     }
     if (prediction[3] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_DOWN);
-      document.body.dispatchEvent(newEvent);
+      const newEvent = new CustomEvent(Actions.MOVE_DOWN)
+      document.body.dispatchEvent(newEvent)
     }
     // Shoot
     if (prediction[4] > 0.5) {
-      const newEvent = new CustomEvent(Actions.SHOOT);
-      document.body.dispatchEvent(newEvent);
+      const newEvent = new CustomEvent(Actions.SHOOT)
+      document.body.dispatchEvent(newEvent)
     }
 
     if (Math.random() < 0.01) {
-          Interpreter.experience[SpaceInvaders.gameNumber].states.push({
-                'gameState': Array.from(data.data),
-                'action': prediction
-          })
+      Interpreter.experience[SpaceInvaders.gameNumber].states.push({
+        gameState: Array.from(data.data),
+        action: prediction
+      })
     }
 
     // Only begin training after the first game is complete and a total reward value is calculated
     if (Interpreter.experience.length > 1) {
-          // Reformat collected data so it can be used for training the critic network
-          const criticTrainingData = {
-            'states': [],
-            'actions': [],
-            'rewards': []
-          }
-          // Loop through all recorded games except for the most recent one (it has not yet been completed and the reward score has not been determined)
-          for (var i = 0; i < Interpreter.experience.length - 1; i ++) {
-            // Loop through each recorded state/action pair from game
-            for (var j = 0; j < Interpreter.experience[i].states.length; j ++) {
-              // Add game states, actions, and rewards to three separate arrays
-              criticTrainingData.states.push(Interpreter.experience[i].states[j].gameState)
-              criticTrainingData.actions.push(Interpreter.experience[i].states[j].action)
-              criticTrainingData.rewards.push(Interpreter.experience[i].reward)
-            }
-          }
+      // Reformat collected data so it can be used for training the critic network
+      const criticTrainingData = {
+        states: [],
+        actions: [],
+        rewards: []
+      }
+      // Loop through all recorded games except for the most recent one (it has not yet been completed and the reward score has not been determined)
+      for (var i = 0; i < Interpreter.experience.length - 1; i++) {
+        // Loop through each recorded state/action pair from game
+        for (var j = 0; j < Interpreter.experience[i].states.length; j++) {
+          // Add game states, actions, and rewards to three separate arrays
+          criticTrainingData.states.push(Interpreter.experience[i].states[j].gameState)
+          criticTrainingData.actions.push(Interpreter.experience[i].states[j].action)
+          criticTrainingData.rewards.push(Interpreter.experience[i].reward)
+        }
+      }
 
-          // Train the critic network
-          tf.tidy(
-                () => {
-                      // Convert recorded experiences (state/action pairs) to TensorFlow.js tensors
-                      const states = tf.tensor(criticTrainingData.states, [criticTrainingData.states.length, data.width, data.height, 4])
-                      const actions = tf.tensor(criticTrainingData.actions)
-                      const rewards = tf.tensor(criticTrainingData.rewards, [criticTrainingData.states.length, 1])
+      // Train the critic network
+      tf.tidy(() => {
+        // Convert recorded experiences (state/action pairs) to TensorFlow.js tensors
+        const states = tf.tensor(criticTrainingData.states, [
+          criticTrainingData.states.length,
+          data.width,
+          data.height,
+          4
+        ])
+        const actions = tf.tensor(criticTrainingData.actions)
+        const rewards = tf.tensor(criticTrainingData.rewards, [criticTrainingData.states.length, 1])
 
-                      // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
-                      for (var i = 0; i < 1; i++) {
-                            ai.settings.optimizer.minimize(() => ai.settings.loss(ai.critic.model.predict([states, actions]), rewards));
-                      }
-                      // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
-                }
+        // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
+        for (var i = 0; i < 1; i++) {
+          ai.settings.optimizer.minimize(() =>
+            ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
           )
-      }
+        }
+        // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
+      })
+    }
 
-    for (var i = 0; i < 5; i ++) {
-      var indicator = document.querySelector('#prob' + (i + 1));
-      indicator.innerHTML = prediction[i].toFixed(2);
+    for (var i = 0; i < 5; i++) {
+      var indicator = document.querySelector('#prob' + (i + 1))
+      indicator.innerHTML = prediction[i].toFixed(2)
       if (prediction[i] > 0.5) {
-        indicator.setAttribute('style', 'background-color: blue;');
-      }
-      else {
-        indicator.setAttribute('style', '');
+        indicator.setAttribute('style', 'background-color: blue;')
+      } else {
+        indicator.setAttribute('style', '')
       }
     }
-    document.querySelector('#gamesPlayed').innerHTML = SpaceInvaders.gameNumber + ' ' + (SpaceInvaders.gameNumber == 1 ? 'game' : 'games') + ' played';
-    document.querySelector('#timeElapsed').innerHTML = SpaceInvaders.totalTime + 'ms elapsed';
-    document.querySelector('#statesRecorded').innerHTML =  Interpreter.experience[SpaceInvaders.gameNumber].states.length + ' states recorded';
+    document.querySelector('#gamesPlayed').innerHTML =
+      SpaceInvaders.gameNumber +
+      ' ' +
+      (SpaceInvaders.gameNumber == 1 ? 'game' : 'games') +
+      ' played'
+    document.querySelector('#timeElapsed').innerHTML = SpaceInvaders.totalTime + 'ms elapsed'
+    document.querySelector('#statesRecorded').innerHTML =
+      Interpreter.experience[SpaceInvaders.gameNumber].states.length + ' states recorded'
   }
 
   // Handle reinforcement learning events that must be done when a game ends
   public endGame() {
     // Calculate and store reward for game after it has ended
-    Interpreter.experience[SpaceInvaders.gameNumber].reward = new Interpreter().reward();
+    Interpreter.experience[SpaceInvaders.gameNumber].reward = new Interpreter().reward()
     // Add a new game to the experience replay buffer
     Interpreter.experience.push({
-          'states': [],
-          'reward': 0
-    });
+      states: [],
+      reward: 0
+    })
   }
 
   // Generate composite reward value after game is complete
   public reward() {
-    return SpaceInvaders.score + (SpaceInvaders.totalTime * SpaceInvaders.gameSpeed / 50000);
+    return SpaceInvaders.score + (SpaceInvaders.totalTime * SpaceInvaders.gameSpeed) / 50000
   }
 }

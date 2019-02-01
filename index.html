@@ -1,96 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <style type="text/css">
+      #main-container {
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 0 15px;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+      }
 
+      #game {
+        flex: 1;
+      }
+      #interpreter {
+        flex: 1;
+      }
 
-<style type="text/css">
-  #main-container {
-    margin: 0 auto;
-    max-width: 1200px;
-    padding: 0 15px;
-    overflow: hidden;
-    text-align: center;
-    display: flex;
-  }
+      body {
+        background-color: black;
+        color: #50d8ff;
+      }
 
-  #game{
-    flex: 1;
-  }
-  #interpreter{
-    flex: 1;
-  }
+      a {
+        color: #50d8ff;
+      }
 
-  body {
-    background-color: black;
-    color: #50d8ff;
-  }
+      #actionTests > button,
+      #outputVis > p {
+        width: 18%;
+        display: inline-block;
+      }
+    </style>
 
-  a {
-    color: #50d8ff;
-  }
+    <div id="main-container">
+      <section id="game">
+        <p>You have reached the Space Invaders game!</p>
 
-  #actionTests > button, #outputVis > p {
-    width: 18%;
-    display: inline-block;
-  }
-</style>
+        <canvas id="game-canvas">
+          Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+        </canvas>
+        <p>Keys: Arrows = movment, Space = shoot (todo)</p>
 
-<div id="main-container">
-  <section id="game">
-    <p>You have reached the Space Invaders game!</p>
-
-    <canvas id="game-canvas"> Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
-    </canvas>
-    <p>Keys: Arrows = movment, Space = shoot (todo)</p>
-
-    <p>This code matches the last video of the youtube series <a
-      href="https://www.youtube.com/playlist?list=PLCrwuqjmVebIU2b4qesWz7PAEm1UJl15n">here</a></p>
-  </section>
-  <section id="interpreter">
-    <h1>Interpreter viewport</h1>
-    <p>Visualises what we feed into the CNN.</p>
-    <h2>mini-colour-canvas</h2>
-    <canvas width="100" height="100" id="mini-colour-canvas"></canvas>
-    <h2>mini-black and white-canvas</h2>
-    <canvas width="100" height="100" id="mono-canvas"></canvas>
-    <h3>Agent interface actions tests</h3>
-    <div id="actionTests">
-      <button id="leftBtn">Left</button>
-      <button id="rightBtn">Right</button>
-      <button id="upBtn">Up</button>
-      <button id="downBtn">Down</button>
-      <button id="shootBtn">Shoot</button>
+        <p>
+          This code matches the last video of the youtube series
+          <a href="https://www.youtube.com/playlist?list=PLCrwuqjmVebIU2b4qesWz7PAEm1UJl15n"
+            >here</a
+          >
+        </p>
+      </section>
+      <section id="interpreter">
+        <h1>Interpreter viewport</h1>
+        <p>Visualises what we feed into the CNN.</p>
+        <h2>mini-colour-canvas</h2>
+        <canvas width="100" height="100" id="mini-colour-canvas"></canvas>
+        <h2>mini-black and white-canvas</h2>
+        <canvas width="100" height="100" id="mono-canvas"></canvas>
+        <h3>Agent interface actions tests</h3>
+        <div id="actionTests">
+          <button id="leftBtn">Left</button>
+          <button id="rightBtn">Right</button>
+          <button id="upBtn">Up</button>
+          <button id="downBtn">Down</button>
+          <button id="shootBtn">Shoot</button>
+        </div>
+        <div id="outputVis">
+          <p id="prob1"></p>
+          <p id="prob2"></p>
+          <p id="prob3"></p>
+          <p id="prob4"></p>
+          <p id="prob5"></p>
+        </div>
+        <p id="gamesPlayed"></p>
+        <p id="timeElapsed"></p>
+        <p id="statesRecorded"></p>
+        <div>
+          <input type="range" id="gameSpeed" min="0" max="1000" value="50" />
+          <label for="gameSpeed">Game Speed</label>
+        </div>
+      </section>
     </div>
-    <div id="outputVis">
-      <p id="prob1"></p>
-      <p id="prob2"></p>
-      <p id="prob3"></p>
-      <p id="prob4"></p>
-      <p id="prob5"></p>
-    </div>
-    <p id="gamesPlayed"></p>
-    <p id="timeElapsed"></p>
-    <p id="statesRecorded"></p>
-    <div>
-      <input type="range" id="gameSpeed" min="0" max="1000" value="50">
-      <label for="gameSpeed">Game Speed</label>
-    </div>
-  </section>
 
-</div>
-
-
-<a href="https://github.com/QuantumInformation/youtube-space-invaders">
-  <img style="position: absolute; top: 0; right: 0; border: 0;"
-       src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
-       alt="Fork me on GitHub"
-       data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-
-
-</body>
-<script src="index.ts"></script>
+    <a href="https://github.com/QuantumInformation/youtube-space-invaders">
+      <img
+        style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+        alt="Fork me on GitHub"
+        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+    /></a>
+  </body>
+  <script src="index.ts"></script>
 </html>

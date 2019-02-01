@@ -32,7 +32,8 @@ export class Player implements IGameObject {
   update(elapsedUnit) {
     this.position.x += this.directionVector.x * elapsedUnit * MEDIUM_MOVEMENT_SPEED
     this.position.y += this.directionVector.y * elapsedUnit * MEDIUM_MOVEMENT_SPEED
-    if(this.lastCommandWasAgentEvent){ // agent decides one frame at a time
+    if (this.lastCommandWasAgentEvent) {
+      // agent decides one frame at a time
       this.remainStationary()
     }
   }

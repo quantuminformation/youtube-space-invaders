@@ -14,9 +14,9 @@ function setupGame() {
     window.addEventListener('keydown', game.onKeyDown.bind(game))
     window.addEventListener('keyup', game.onKeyUp.bind(game))
   }
-  reset();
+  reset()
 
-  const ai = interpreter.setupAgent();
+  const ai = interpreter.setupAgent()
   function gameLoop() {
     requestAnimationFrame(gameLoop)
     // Drawing code goes here
@@ -27,11 +27,13 @@ function setupGame() {
     if (SpaceInvaders.gameState == GAME_OVER) {
       SpaceInvaders.gameState = INITIALISING
       interpreter.endGame()
-      SpaceInvaders.gameNumber ++
+      SpaceInvaders.gameNumber++
       reset()
     }
 
-    SpaceInvaders.gameSpeed = parseInt((<HTMLInputElement>document.querySelector('#gameSpeed')).value)
+    SpaceInvaders.gameSpeed = parseInt(
+      (<HTMLInputElement>document.querySelector('#gameSpeed')).value
+    )
   }
 
   gameLoop()
