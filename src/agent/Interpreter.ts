@@ -231,6 +231,6 @@ export class Interpreter {
 
   // Generate composite reward value after game is complete
   public reward() {
-    return SpaceInvaders.score + (SpaceInvaders.totalTime / 1000);
+    return SpaceInvaders.score + (SpaceInvaders.totalTime * SpaceInvaders.gameSpeed / 50000);
   }
 }

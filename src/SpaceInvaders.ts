@@ -34,6 +34,7 @@ export class SpaceInvaders {
   static totalTime: number = 0
   static elapsedTime: number = 0
   static gameNumber: number = 0
+  static gameSpeed: number = 50
 
   private waveManager = new WaveManager()
   private player: Player
@@ -106,7 +107,7 @@ export class SpaceInvaders {
     SpaceInvaders.totalTime = new Date().getTime() - SpaceInvaders.gameStart
 
     // get the current time as seconds then multiple by the game speed to get a sensible number for multiplying velocities per frame
-    const elapsedReduced: number = (SpaceInvaders.elapsedTime / 1000.0) * GameSettings.GAME_SPEED
+    const elapsedReduced: number = (SpaceInvaders.elapsedTime / 1000.0) * SpaceInvaders.gameSpeed
 
     this.drawBackground()
 

@@ -1,7 +1,7 @@
 import { SpaceInvaders } from './src/SpaceInvaders'
 import { Actions } from './src/SpaceInvaders'
 import { Interpreter } from './src/agent/Interpreter'
-import { GAME_OVER, INITIALISING } from './src/constants/GameStates';
+import { GAME_OVER, INITIALISING } from './src/constants/GameStates'
 
 function setupGame() {
   const interpreter = new Interpreter()
@@ -30,6 +30,8 @@ function setupGame() {
       SpaceInvaders.gameNumber ++
       reset()
     }
+
+    SpaceInvaders.gameSpeed = parseInt((<HTMLInputElement>document.querySelector('#gameSpeed')).value)
   }
 
   gameLoop()
