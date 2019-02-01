@@ -15,6 +15,10 @@ Latest video of the series
 " target="_blank"><img src="http://img.youtube.com/vi/bIeZNJqsKsk/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
+# Bot
+
+In addition to the main web-based game, an artificial intelligence-based bot is under development to play the Space Invaders game developed by Nikos. More information about this bot can be found [here](./BOT.md).
+
 # Conventions
 
 Angles are measured clockwise from north. For example, east is 90 degrees.
