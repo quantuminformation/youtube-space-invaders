@@ -2,7 +2,7 @@
 import { SpaceInvaders } from './src/SpaceInvaders'
 import { Actions } from './src/SpaceInvaders'
 import { Interpreter } from './src/agent/Interpreter'
-import { GAME_OVER, INITIALISING } from './src/constants/GameStates'
+import { GAME_OVER, YOU_WIN, INITIALISING } from './src/constants/GameStates'
 
 function setupGame() {
   const interpreter = new Interpreter()
@@ -14,6 +14,8 @@ function setupGame() {
     game = new SpaceInvaders(document.querySelector('#game-canvas'))
     // Reset start time of game class
     SpaceInvaders.gameStart = new Date().getTime()
+    // Reset score
+    SpaceInvaders.score = 0
     // game.handleCollisions.bind(game)
     // Bind keyboard events
     window.addEventListener('keydown', game.onKeyDown.bind(game))
@@ -33,7 +35,7 @@ function setupGame() {
     interpreter.agentAction(ai)
 
     // If game ends, handle agent actions and reset game
-    if (SpaceInvaders.gameState == GAME_OVER) {
+    if (SpaceInvaders.gameState == GAME_OVER || SpaceInvaders.gameState == YOU_WIN) {
       SpaceInvaders.gameState = INITIALISING
       // Execute end-of-game actions for AI agent (handle reward)
       interpreter.endGame()
