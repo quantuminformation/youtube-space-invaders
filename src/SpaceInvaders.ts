@@ -374,6 +374,18 @@ export class SpaceInvaders {
         this.invaderBullets = this.invaderBullets.concat(invader.shootAhead())
       }
     })
+
+    // End game when enemies reach player bases
+    if (
+      this.invaders.some(e => {
+        return (
+          e.position.y >
+          this.bases[0].allDestructibleScenery[0].position.y - this.invaders[0].dimensions.height
+        )
+      })
+    ) {
+      SpaceInvaders.gameState = GAME_OVER
+    }
   }
 
   public updateBullets(elapsedUnit: number) {
