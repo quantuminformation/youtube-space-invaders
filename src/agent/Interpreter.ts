@@ -116,6 +116,7 @@ export class Interpreter {
   }
 
   public async agentAction(ai) {
+    // Check if agent is enabled
     if (Interpreter.agentEnabled) {
       // Get game state data
       var data = this.readPixels()
@@ -150,6 +151,7 @@ export class Interpreter {
         document.body.dispatchEvent(newEvent)
       }
 
+      // Add state/action pairs to experience replay buffer at random intervals throughout game
       if (Math.random() < 0.01) {
         Interpreter.experience[SpaceInvaders.gameNumber].states.push({
           gameState: Array.from(data.data),
@@ -200,9 +202,11 @@ export class Interpreter {
           // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
         })
       }
+      // Display actions chosen by agent below action test buttons
       for (var i = 0; i < 5; i++) {
         var indicator = document.querySelector('#prob' + (i + 1))
         indicator.innerHTML = prediction[i].toFixed(2)
+        // Shade tile blue if action is executed by agent event handler
         if (prediction[i] > 0.5) {
           indicator.setAttribute('style', 'background-color: blue;')
         } else {
@@ -216,6 +220,7 @@ export class Interpreter {
       }
     }
 
+    // Update game/agent information panel
     document.querySelector('#gamesPlayed').innerHTML =
       SpaceInvaders.gameNumber +
       ' ' +

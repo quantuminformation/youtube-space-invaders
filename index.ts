@@ -1,3 +1,4 @@
+// Import necessary classes and gamestates
 import { SpaceInvaders } from './src/SpaceInvaders'
 import { Actions } from './src/SpaceInvaders'
 import { Interpreter } from './src/agent/Interpreter'
@@ -7,16 +8,23 @@ function setupGame() {
   const interpreter = new Interpreter()
   var game = undefined
 
+  // Reset game after player loses or wins
   function reset() {
+    // Create a new game instance
     game = new SpaceInvaders(document.querySelector('#game-canvas'))
+    // Reset start time of game class
     SpaceInvaders.gameStart = new Date().getTime()
     // game.handleCollisions.bind(game)
+    // Bind keyboard events
     window.addEventListener('keydown', game.onKeyDown.bind(game))
     window.addEventListener('keyup', game.onKeyUp.bind(game))
   }
+  // Execute reset function to initialize game
   reset()
 
+  // Set up AI agent and return actor and critic networks and settings
   const ai = interpreter.setupAgent()
+  // Loop that will be executed continuously while the game is running
   function gameLoop() {
     requestAnimationFrame(gameLoop)
     // Drawing code goes here
@@ -24,8 +32,10 @@ function setupGame() {
     interpreter.readPixels()
     interpreter.agentAction(ai)
 
+    // If game ends, handle agent actions and reset game
     if (SpaceInvaders.gameState == GAME_OVER) {
       SpaceInvaders.gameState = INITIALISING
+      // Execute end-of-game actions for AI agent (handle reward)
       interpreter.endGame()
       SpaceInvaders.gameNumber++
       reset()
@@ -33,6 +43,7 @@ function setupGame() {
 
     // TODO: Handle control input elements on update instead of on each game frame
     Interpreter.agentEnabled = (<HTMLInputElement>document.querySelector('#enableAgent')).checked
+    // Game speed slider
     SpaceInvaders.gameSpeed = parseInt(
       (<HTMLInputElement>document.querySelector('#gameSpeed')).value
     )
