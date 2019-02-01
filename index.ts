@@ -31,6 +31,8 @@ function setupGame() {
       reset()
     }
 
+    // TODO: Handle control input elements on update instead of on each game frame
+    Interpreter.agentEnabled = (<HTMLInputElement>document.querySelector('#enableAgent')).checked
     SpaceInvaders.gameSpeed = parseInt(
       (<HTMLInputElement>document.querySelector('#gameSpeed')).value
     )

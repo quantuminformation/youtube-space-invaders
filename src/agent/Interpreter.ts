@@ -7,6 +7,7 @@ var tf = require('@tensorflow/tfjs')
  */
 export class Interpreter {
   public static experience: any = []
+  public static agentEnabled: boolean = true
 
   readPixels() {
     const gameCanvas: HTMLCanvasElement = document.querySelector(
@@ -115,96 +116,106 @@ export class Interpreter {
   }
 
   public async agentAction(ai) {
-    // Get game state data
-    var data = this.readPixels()
-    var prediction = tf.tidy(() => {
-      // Convert canvas data to a tensor
-      const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4])
-      // Run prediction using agent model on current game state
-      return ai.agent.model.predict(inputTensor).dataSync()
-    })
-
-    // Handle actions chosen by the agent
-    // Movement controls
-    if (prediction[0] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_LEFT)
-      document.body.dispatchEvent(newEvent)
-    }
-    if (prediction[1] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_RIGHT)
-      document.body.dispatchEvent(newEvent)
-    }
-    if (prediction[2] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_UP)
-      document.body.dispatchEvent(newEvent)
-    }
-    if (prediction[3] > 0.5) {
-      const newEvent = new CustomEvent(Actions.MOVE_DOWN)
-      document.body.dispatchEvent(newEvent)
-    }
-    // Shoot
-    if (prediction[4] > 0.5) {
-      const newEvent = new CustomEvent(Actions.SHOOT)
-      document.body.dispatchEvent(newEvent)
-    }
-
-    if (Math.random() < 0.01) {
-      Interpreter.experience[SpaceInvaders.gameNumber].states.push({
-        gameState: Array.from(data.data),
-        action: prediction
+    if (Interpreter.agentEnabled) {
+      // Get game state data
+      var data = this.readPixels()
+      var prediction = tf.tidy(() => {
+        // Convert canvas data to a tensor
+        const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4])
+        // Run prediction using agent model on current game state
+        return ai.agent.model.predict(inputTensor).dataSync()
       })
-    }
 
-    // Only begin training after the first game is complete and a total reward value is calculated
-    if (Interpreter.experience.length > 1) {
-      // Reformat collected data so it can be used for training the critic network
-      const criticTrainingData = {
-        states: [],
-        actions: [],
-        rewards: []
+      // Handle actions chosen by the agent
+      // Movement controls
+      if (prediction[0] > 0.5) {
+        const newEvent = new CustomEvent(Actions.MOVE_LEFT)
+        document.body.dispatchEvent(newEvent)
       }
-      // Loop through all recorded games except for the most recent one (it has not yet been completed and the reward score has not been determined)
-      for (var i = 0; i < Interpreter.experience.length - 1; i++) {
-        // Loop through each recorded state/action pair from game
-        for (var j = 0; j < Interpreter.experience[i].states.length; j++) {
-          // Add game states, actions, and rewards to three separate arrays
-          criticTrainingData.states.push(Interpreter.experience[i].states[j].gameState)
-          criticTrainingData.actions.push(Interpreter.experience[i].states[j].action)
-          criticTrainingData.rewards.push(Interpreter.experience[i].reward)
+      if (prediction[1] > 0.5) {
+        const newEvent = new CustomEvent(Actions.MOVE_RIGHT)
+        document.body.dispatchEvent(newEvent)
+      }
+      if (prediction[2] > 0.5) {
+        const newEvent = new CustomEvent(Actions.MOVE_UP)
+        document.body.dispatchEvent(newEvent)
+      }
+      if (prediction[3] > 0.5) {
+        const newEvent = new CustomEvent(Actions.MOVE_DOWN)
+        document.body.dispatchEvent(newEvent)
+      }
+      // Shoot
+      if (prediction[4] > 0.5) {
+        const newEvent = new CustomEvent(Actions.SHOOT)
+        document.body.dispatchEvent(newEvent)
+      }
+
+      if (Math.random() < 0.01) {
+        Interpreter.experience[SpaceInvaders.gameNumber].states.push({
+          gameState: Array.from(data.data),
+          action: prediction
+        })
+      }
+
+      // Only begin training after the first game is complete and a total reward value is calculated
+      if (Interpreter.experience.length > 1) {
+        // Reformat collected data so it can be used for training the critic network
+        const criticTrainingData = {
+          states: [],
+          actions: [],
+          rewards: []
+        }
+        // Loop through all recorded games except for the most recent one (it has not yet been completed and the reward score has not been determined)
+        for (var i = 0; i < Interpreter.experience.length - 1; i++) {
+          // Loop through each recorded state/action pair from game
+          for (var j = 0; j < Interpreter.experience[i].states.length; j++) {
+            // Add game states, actions, and rewards to three separate arrays
+            criticTrainingData.states.push(Interpreter.experience[i].states[j].gameState)
+            criticTrainingData.actions.push(Interpreter.experience[i].states[j].action)
+            criticTrainingData.rewards.push(Interpreter.experience[i].reward)
+          }
+        }
+
+        // Train the critic network
+        tf.tidy(() => {
+          // Convert recorded experiences (state/action pairs) to TensorFlow.js tensors
+          const states = tf.tensor(criticTrainingData.states, [
+            criticTrainingData.states.length,
+            data.width,
+            data.height,
+            4
+          ])
+          const actions = tf.tensor(criticTrainingData.actions)
+          const rewards = tf.tensor(criticTrainingData.rewards, [
+            criticTrainingData.states.length,
+            1
+          ])
+
+          // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
+          for (var i = 0; i < 1; i++) {
+            ai.settings.optimizer.minimize(() =>
+              ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
+            )
+          }
+          // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
+        })
+      }
+      for (var i = 0; i < 5; i++) {
+        var indicator = document.querySelector('#prob' + (i + 1))
+        indicator.innerHTML = prediction[i].toFixed(2)
+        if (prediction[i] > 0.5) {
+          indicator.setAttribute('style', 'background-color: blue;')
+        } else {
+          indicator.setAttribute('style', '')
         }
       }
-
-      // Train the critic network
-      tf.tidy(() => {
-        // Convert recorded experiences (state/action pairs) to TensorFlow.js tensors
-        const states = tf.tensor(criticTrainingData.states, [
-          criticTrainingData.states.length,
-          data.width,
-          data.height,
-          4
-        ])
-        const actions = tf.tensor(criticTrainingData.actions)
-        const rewards = tf.tensor(criticTrainingData.rewards, [criticTrainingData.states.length, 1])
-
-        // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
-        for (var i = 0; i < 1; i++) {
-          ai.settings.optimizer.minimize(() =>
-            ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
-          )
-        }
-        // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
-      })
-    }
-
-    for (var i = 0; i < 5; i++) {
-      var indicator = document.querySelector('#prob' + (i + 1))
-      indicator.innerHTML = prediction[i].toFixed(2)
-      if (prediction[i] > 0.5) {
-        indicator.setAttribute('style', 'background-color: blue;')
-      } else {
-        indicator.setAttribute('style', '')
+    } else {
+      for (var i = 0; i < 5; i++) {
+        var indicator = document.querySelector('#prob' + (i + 1))
+        indicator.innerHTML = '-'
       }
     }
+
     document.querySelector('#gamesPlayed').innerHTML =
       SpaceInvaders.gameNumber +
       ' ' +
