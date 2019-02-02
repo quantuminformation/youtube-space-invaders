@@ -14,6 +14,8 @@ export class Interpreter {
       .square()
       .mean()
   public static optimizer: any = tf.train.sgd(0.0000001)
+  public static agent: any = undefined
+  public static critic: any = undefined
 
   readPixels() {
     const gameCanvas: HTMLCanvasElement = document.querySelector(
@@ -131,14 +133,12 @@ export class Interpreter {
       reward: 0
     })
 
-    // Return object containing actor and critic networks for evaluation
-    return {
-      agent: agent,
-      critic: critic
-    }
+    // Store object containing actor and critic networks for evaluation
+    Interpreter.agent = agent
+    Interpreter.critic = critic
   }
 
-  public async agentAction(ai) {
+  public async agentAction() {
     // Check if agent is enabled
     if (Interpreter.agentEnabled) {
       // Get game state data
@@ -147,7 +147,7 @@ export class Interpreter {
         // Convert canvas data to a tensor
         const inputTensor = tf.tensor(Array.from(data.data), [1, data.width, data.height, 4])
         // Run prediction using agent model on current game state
-        return ai.agent.model.predict(inputTensor).dataSync()
+        return Interpreter.agent.model.predict(inputTensor).dataSync()
       })
 
       // Handle actions chosen by the agent
@@ -219,7 +219,10 @@ export class Interpreter {
           // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
           for (var i = 0; i < 1; i++) {
             Interpreter.optimizer.minimize(() => {
-              const error = Interpreter.loss(ai.critic.model.predict([states, actions]), rewards)
+              const error = Interpreter.loss(
+                Interpreter.critic.model.predict([states, actions]),
+                rewards
+              )
               error.print()
               return error
             })

@@ -24,15 +24,15 @@ function setupGame() {
   // Execute reset function to initialize game
   reset()
 
-  // Set up AI agent and return actor and critic networks and settings
-  const ai = interpreter.setupAgent()
+  // Set up AI agent and store actor and critic networks and settings
+  interpreter.setupAgent()
   // Loop that will be executed continuously while the game is running
   function gameLoop() {
     requestAnimationFrame(gameLoop)
     // Drawing code goes here
     game.update()
     interpreter.readPixels()
-    interpreter.agentAction(ai)
+    interpreter.agentAction()
 
     // If game ends, handle agent actions and reset game
     if (SpaceInvaders.gameState == GAME_OVER || SpaceInvaders.gameState == YOU_WIN) {
