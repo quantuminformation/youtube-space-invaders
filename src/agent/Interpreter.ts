@@ -8,6 +8,12 @@ var tf = require('@tensorflow/tfjs')
 export class Interpreter {
   public static experience: any = []
   public static agentEnabled: boolean = true
+  public static loss: any = (pred, label) =>
+    pred
+      .sub(label)
+      .square()
+      .mean()
+  public static optimizer: any = tf.train.sgd(0.0000001)
 
   readPixels() {
     const gameCanvas: HTMLCanvasElement = document.querySelector(
@@ -146,20 +152,10 @@ export class Interpreter {
       reward: 0
     })
 
-    const settings = {
-      loss: (pred, label) =>
-        pred
-          .sub(label)
-          .square()
-          .mean(),
-      optimizer: tf.train.sgd(0.0000001)
-    }
-
     // Return object containing actor and critic networks for evaluation
     return {
       agent: agent,
-      critic: critic,
-      settings: settings
+      critic: critic
     }
   }
 
@@ -243,8 +239,8 @@ export class Interpreter {
 
           // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
           for (var i = 0; i < 1; i++) {
-            ai.settings.optimizer.minimize(() => {
-              const error = ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
+            Interpreter.optimizer.minimize(() => {
+              const error = Interpreter.loss(ai.critic.model.predict([states, actions]), rewards)
               error.print()
               return error
             })
