@@ -35,6 +35,7 @@ export class Interpreter {
 
     // convert to black and white
 
+    // Retrieve image data from canvas
     const imageData = miniColourCanvasCtx.getImageData(
       0,
       0,
@@ -58,9 +59,11 @@ export class Interpreter {
     return imageData
   }
 
+  // Set up reinforcement learning models: actor and critic
   public setupAgent() {
-    // Get data from canvas
+    // Get game state data from canvas
     var data = this.readPixels()
+    // Actor model that will play the game
     const agent = {
       layers: {
         input: tf.input({ shape: [data.width, data.height, 4] }),
@@ -70,12 +73,14 @@ export class Interpreter {
       },
       model: null
     }
+    // Convenience variable
     var al = agent.layers
     // Define data flow
     al.output = al.dense.apply(al.flatten.apply(al.input))
     // Build model
     agent.model = tf.model({ inputs: al.input, outputs: al.output })
 
+    // Critic network that will evaluate the actor's performance
     const critic = {
       layers: {
         // Input handling
@@ -97,9 +102,12 @@ export class Interpreter {
       },
       model: null
     }
+    // Shortened variable for compact code
     var cl = critic.layers
+    // Add 3 convolutional layers and 3 pooling layers to model
     for (var i = 0; i < 3; i++) {
       cl.conv.push(
+        // 2D convolutional layer
         tf.layers.conv2d({
           kernelSize: 5,
           filters: 2 ** (i + 2),
@@ -107,6 +115,7 @@ export class Interpreter {
           activation: 'relu',
           kernelInitializer: 'VarianceScaling'
         }),
+        // 2D average pooling layer (maxPooling is not used due to this issue https://github.com/tensorflow/tfjs/issues/1189)
         tf.layers.averagePooling2d({
           poolSize: [2, 2],
           strides: [2, 2]
@@ -114,7 +123,9 @@ export class Interpreter {
       )
     }
     var composite = cl.state
+    // Chain together convolutional layers
     for (var i = 0; i < cl.conv.length; i++) {
+      // Apply new layer to previous layers
       composite = cl.conv[i].apply(composite)
     }
 
@@ -177,7 +188,9 @@ export class Interpreter {
       // Add state/action pairs to experience replay buffer at random intervals throughout game
       if (Math.random() < 0.01) {
         Interpreter.experience[SpaceInvaders.gameNumber].states.push({
+          // Game state in terms of pixels
           gameState: Array.from(data.data),
+          // Actions chosen by actor network
           action: prediction
         })
       }
@@ -219,11 +232,14 @@ export class Interpreter {
           // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
           for (var i = 0; i < 1; i++) {
             Interpreter.optimizer.minimize(() => {
+              // Calculate critic loss/cost
               const error = Interpreter.loss(
                 Interpreter.critic.model.predict([states, actions]),
                 rewards
               )
+              // Print error to console
               error.print()
+              // Return loss for optimization
               return error
             })
           }
@@ -231,16 +247,20 @@ export class Interpreter {
       }
       // Display actions chosen by agent below action test buttons
       for (var i = 0; i < 5; i++) {
+        // Locate correct action indicator element
         var indicator = document.querySelector('#prob' + (i + 1))
         indicator.innerHTML = prediction[i].toFixed(2)
         // Shade tile blue if action is executed by agent event handler
         if (prediction[i] > 0.5) {
           indicator.setAttribute('style', 'background-color: blue;')
-        } else {
+        }
+        // Otherwise, no background shading
+        else {
           indicator.setAttribute('style', '')
         }
       }
     } else {
+      // Hide agent action outputs
       for (var i = 0; i < 5; i++) {
         var indicator = document.querySelector('#prob' + (i + 1))
         indicator.innerHTML = '-'
@@ -258,6 +278,7 @@ export class Interpreter {
       Interpreter.experience[SpaceInvaders.gameNumber].states.length + ' states recorded'
   }
 
+  // Update learning rate for model optimization
   public updateLearningRate() {
     Interpreter.optimizer = tf.train.sgd(
       parseFloat((<HTMLInputElement>document.querySelector('#learningRate')).value)
@@ -277,6 +298,8 @@ export class Interpreter {
 
   // Generate composite reward value after game is complete
   public reward() {
+    // r = s + t
+    // where r is the reward, s is the score, and t is the time survived
     return SpaceInvaders.score + (SpaceInvaders.totalTime * SpaceInvaders.gameSpeed) / 50000
   }
 }
