@@ -78,40 +78,8 @@ export class Interpreter {
       layers: {
         // Input handling
         state: tf.input({ shape: [data.width, data.height, 4] }),
-        // First convolutional layer
-        conv1: tf.layers.conv2d({
-          kernelSize: 5,
-          filters: 8,
-          strides: 1,
-          activation: 'relu',
-          kernelInitializer: 'VarianceScaling'
-        }),
-        // First pooling layer
-        pool1: tf.layers.averagePooling2d({
-          poolSize: [2, 2],
-          strides: [2, 2]
-        }),
-        // Second convolutional layer
-        conv2: tf.layers.conv2d({
-          kernelSize: 5,
-          filters: 16,
-          strides: 1,
-          activation: 'relu',
-          kernelInitializer: 'VarianceScaling'
-        }),
-        // Second pooling layer
-        pool2: tf.layers.averagePooling2d({
-          poolSize: [2, 2],
-          strides: [2, 2]
-        }),
-        // Third convolutional layer
-        conv3: tf.layers.conv2d({
-          kernelSize: 5,
-          filters: 8,
-          strides: 1,
-          activation: 'relu',
-          kernelInitializer: 'VarianceScaling'
-        }),
+        // Convolutional and pooling layers
+        conv: [],
         // Third pooling layer
         pool3: tf.layers.averagePooling2d({
           poolSize: [2, 2],
@@ -128,17 +96,28 @@ export class Interpreter {
       model: null
     }
     var cl = critic.layers
+    for (var i = 0; i < 3; i++) {
+      cl.conv.push(
+        tf.layers.conv2d({
+          kernelSize: 5,
+          filters: 2 ** (i + 2),
+          strides: 1,
+          activation: 'relu',
+          kernelInitializer: 'VarianceScaling'
+        }),
+        tf.layers.averagePooling2d({
+          poolSize: [2, 2],
+          strides: [2, 2]
+        })
+      )
+    }
+    var composite = cl.state
+    for (var i = cl.conv.length - 1; i >= 0; i--) {
+      composite = cl.conv[i].apply(composite)
+    }
+
     // Define data flow
-    cl.output = cl.dense.apply(
-      cl.concat.apply([
-        cl.flatten.apply(
-          cl.pool3.apply(
-            cl.conv3.apply(cl.pool2.apply(cl.conv2.apply(cl.pool1.apply(cl.conv1.apply(cl.state)))))
-          )
-        ),
-        cl.action
-      ])
-    )
+    cl.output = cl.dense.apply(cl.concat.apply([cl.flatten.apply(composite), cl.action]))
     // Create model from input and output layers
     critic.model = tf.model({
       inputs: [cl.state, cl.action],
