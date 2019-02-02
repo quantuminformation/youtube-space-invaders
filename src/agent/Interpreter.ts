@@ -243,11 +243,12 @@ export class Interpreter {
 
           // Minimize loss value to fit model to data; model.fit is not used because it is asynchronous and causes errors when executed on a loop
           for (var i = 0; i < 1; i++) {
-            ai.settings.optimizer.minimize(() =>
-              ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
-            )
+            ai.settings.optimizer.minimize(() => {
+              const error = ai.settings.loss(ai.critic.model.predict([states, actions]), rewards)
+              error.print()
+              return error
+            })
           }
-          // ai.settings.loss(ai.critic.model.predict([states, actions]), rewards).print()
         })
       }
       // Display actions chosen by agent below action test buttons
