@@ -49,6 +49,7 @@ function setupGame() {
     SpaceInvaders.gameSpeed = parseInt(
       (<HTMLInputElement>document.querySelector('#gameSpeed')).value
     )
+    interpreter.updateLearningRate()
   }
 
   gameLoop()

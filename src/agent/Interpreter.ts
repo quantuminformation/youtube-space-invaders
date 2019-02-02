@@ -258,6 +258,12 @@ export class Interpreter {
       Interpreter.experience[SpaceInvaders.gameNumber].states.length + ' states recorded'
   }
 
+  public updateLearningRate() {
+    Interpreter.optimizer = tf.train.sgd(
+      parseFloat((<HTMLInputElement>document.querySelector('#learningRate')).value)
+    )
+  }
+
   // Handle reinforcement learning events that must be done when a game ends
   public endGame() {
     // Calculate and store reward for game after it has ended
