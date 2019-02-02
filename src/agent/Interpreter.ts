@@ -114,7 +114,7 @@ export class Interpreter {
       )
     }
     var composite = cl.state
-    for (var i = cl.conv.length - 1; i >= 0; i--) {
+    for (var i = 0; i < cl.conv.length; i++) {
       composite = cl.conv[i].apply(composite)
     }
 
