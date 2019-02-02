@@ -72,6 +72,45 @@ export class Interpreter {
       layers: {
         // Input handling
         state: tf.input({ shape: [data.width, data.height, 4] }),
+        // First convolutional layer
+        conv1: tf.layers.conv2d({
+          kernelSize: 5,
+          filters: 8,
+          strides: 1,
+          activation: 'relu',
+          kernelInitializer: 'VarianceScaling'
+        }),
+        // First pooling layer
+        pool1: tf.layers.averagePooling2d({
+          poolSize: [2, 2],
+          strides: [2, 2]
+        }),
+        // Second convolutional layer
+        conv2: tf.layers.conv2d({
+          kernelSize: 5,
+          filters: 16,
+          strides: 1,
+          activation: 'relu',
+          kernelInitializer: 'VarianceScaling'
+        }),
+        // Second pooling layer
+        pool2: tf.layers.averagePooling2d({
+          poolSize: [2, 2],
+          strides: [2, 2]
+        }),
+        // Third convolutional layer
+        conv3: tf.layers.conv2d({
+          kernelSize: 5,
+          filters: 8,
+          strides: 1,
+          activation: 'relu',
+          kernelInitializer: 'VarianceScaling'
+        }),
+        // Third pooling layer
+        pool3: tf.layers.averagePooling2d({
+          poolSize: [2, 2],
+          strides: [2, 2]
+        }),
         // Flatten game state so it can be combined with agent actions
         flatten: tf.layers.flatten(),
         action: tf.input({ shape: [5] }),
@@ -84,7 +123,16 @@ export class Interpreter {
     }
     var cl = critic.layers
     // Define data flow
-    cl.output = cl.dense.apply(cl.concat.apply([cl.flatten.apply(cl.state), cl.action]))
+    cl.output = cl.dense.apply(
+      cl.concat.apply([
+        cl.flatten.apply(
+          cl.pool3.apply(
+            cl.conv3.apply(cl.pool2.apply(cl.conv2.apply(cl.pool1.apply(cl.conv1.apply(cl.state)))))
+          )
+        ),
+        cl.action
+      ])
+    )
     // Create model from input and output layers
     critic.model = tf.model({
       inputs: [cl.state, cl.action],
@@ -104,7 +152,7 @@ export class Interpreter {
           .sub(label)
           .square()
           .mean(),
-      optimizer: tf.train.sgd(0.000000001)
+      optimizer: tf.train.sgd(0.0000001)
     }
 
     // Return object containing actor and critic networks for evaluation
